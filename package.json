@@ -10,6 +10,7 @@
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-emoji": "git+https://github.com/jorilallo/react-native-emoji.git",
+    "react-native-extended-stylesheet": "^0.8.1",
     "react-navigation": "^2.0.2"
   },
   "devDependencies": {
