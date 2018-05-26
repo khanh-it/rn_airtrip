@@ -1,4 +1,5 @@
 import { AppRegistry } from 'react-native';
+import prjGlob from './app/global'; // project's globals
 // import App from './App';
 // import App from './App.ReactNavigation';
 // import App from './App.ReactNativeEmojis';
