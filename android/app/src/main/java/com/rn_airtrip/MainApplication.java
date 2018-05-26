@@ -1,4 +1,4 @@
-package com.rn_airtrip;
+package com.evolableasia.airtrip;
 
 import android.app.Application;
 
