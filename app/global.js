@@ -3,6 +3,9 @@ import Lang from './helpers/lang';
 //
 // export * from './helpers/native-base';
 
+// Init global styles
+export * from './assets/css/styles';
+
 /**
  * Define project's global 
  */
