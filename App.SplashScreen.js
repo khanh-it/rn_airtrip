@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 //
-import SplashScreen from 'react-native-splash-screen'
-//
 import { View, Text } from 'react-native';
+//
+import SplashScreen from 'react-native-splash-screen';
 
 /**
  * 
@@ -21,7 +21,7 @@ export default class App extends Component {
 
   render() {
     return (
-        <View><Text>React Redux</Text></View>
+        <View><Text>React SplashScreen</Text></View>
     );
   }
 }
