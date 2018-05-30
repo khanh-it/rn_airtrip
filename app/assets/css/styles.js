@@ -11,15 +11,15 @@ EStyleSheet.build({
 // global styles
 const css = {
     html: {
-        flex: 1
-    },
-    document: {
         flex: 1,
         // borderWidth: 1, borderColor: 'red'
     },
+    document: {
+        flex: 1,
+        // borderWidth: 1, borderColor: 'yellow'
+    },
     body: {
-        borderWidth: 1,
-        borderColor: 'green'
+        borderWidth: 1, borderColor: 'green'
     }
 };
 const styles = EStyleSheet.create(css);

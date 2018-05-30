@@ -5,15 +5,26 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 
 //
 const styles = EStyleSheet.create({
+    // Page
+    page: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderWidth: 1, borderColor: 'blue',
+    },
+    //.end
     
     // Float icon
     fIcon: {
         position: 'absolute',
         top: 0,
         right: 0,
+        zIndex: 9999,
         minWidth: 35,
         minHeight: 35,
-        borderWidth: 1, borderColor: 'red',
+        // borderWidth: 1, borderColor: 'red',
     },
     fIconIcon: {
         position: 'absolute',
@@ -21,8 +32,11 @@ const styles = EStyleSheet.create({
         left: 0,
     },
     fIconImg: {
-        width: 20,
-        height: 20,
+        // width: 20,
+        // height: 20,
+        color: 'white',
+        fontWeight: '900',
+        fontSize: 24
     },
     fIconBadge: {
         position: 'absolute',
@@ -31,12 +45,13 @@ const styles = EStyleSheet.create({
         backgroundColor: 'red',
         minWidth: 20,
         minHeight: 20,
-        borderRadius: 10
+        borderRadius: 10,
+        justifyContent: 'center'
     },
     fIconBadgeTxt: {
         color: 'white',
         textAlign: 'center',
-        // fontSize: '0.8rem'
+        fontSize: 10
     }
     //.end
 });

@@ -3,19 +3,17 @@
  */
 import React, { Component } from "react";
 //
-import SplashScreen from 'react-native-splash-screen';
-//
 import {
   ScrollView,
   View,
-  Text
+  Text,
+  ImageBackground
 } from 'react-native';
-//
-import EStyleSheet from 'react-native-extended-stylesheet';
+// Css
 import styles from './styles';
 
 // Component(s)
-import NotificationComponent from '../NotificationComponent';
+import ImgBgSliderComponent from './ImgBgSliderComponent';
 
 /**
  * @class HomeComponent
@@ -23,23 +21,27 @@ import NotificationComponent from '../NotificationComponent';
 export default class HomeComponent extends Component {
   constructor(props) {
     super(props);
+
+    // Initial state
     this.state = {};
   }
 
-  componentDidMount() {
-    // Hide SplashScreen
-    SplashScreen.hide();
-  }
+  componentDidMount() {}
 
   render() {
+    let { bgSrc } = this.state;
     return (
-      <ScrollView
-        style={[EStyleSheet.value('$document')]}
-        contentContainerStyle={[EStyleSheet.value('$body')]}
+      <View
+        style={[styles.root]}
       >
-        <NotificationComponent />
-        <Text>HomeScreen</Text>
-      </ScrollView>
+        <ImgBgSliderComponent />
+        <ScrollView
+          style={[styles.page]}
+          contentContainerStyle={[styles.pageContent]}
+        >
+          <Text>HomeScreen</Text>
+        </ScrollView>
+      </View>
     );
   }
 }
