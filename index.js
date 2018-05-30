@@ -6,6 +6,7 @@ import prjGlob from './app/global'; // project's globals
 // import App from './App.ReactNativeExtendedStyleSheet';
 // import App from './App.ReactRedux';
 // import App from './App.SplashScreen';
-import App from './App.ReactNativeVectorIcons';
+// import App from './App.ReactNativeVectorIcons';
+import App from './App.ReactNativeAnimatable';
 
 AppRegistry.registerComponent('rn_airtrip', () => App);
