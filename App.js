@@ -24,9 +24,11 @@ export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor} style={[styles.html]}>
+        <PersistGate loading={null} persistor={persistor}>
           <View style={[styles.html]}>
-            <HomeScreen />
+            <View style={[styles.document]}>
+              <HomeScreen />
+            </View>
           </View>
         </PersistGate>
       </Provider>

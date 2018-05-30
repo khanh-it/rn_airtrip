@@ -3,17 +3,16 @@
  */
 import React, { Component } from "react";
 //
-import SplashScreen from 'react-native-splash-screen';
-//
 import {
   View,
+  Image,
   Text
 } from 'react-native';
-//
+// Css
 import styles from './styles';
 
 /**
- * @class HomeComponent
+ * @class NotificationComponent
  */
 export default class NotificationComponent extends Component {
   constructor(props) {
@@ -22,15 +21,24 @@ export default class NotificationComponent extends Component {
   }
 
   componentDidMount() {
-    // Hide SplashScreen
-    SplashScreen.hide();
   }
 
   render() {
-    return (
-      <View>
+    return ([
+      // Page
+      <View key='page' style={[styles.page]}>
         <Text>NotificationComponent</Text>
+      </View>,
+      //.end
+      // Floating icon
+      <View key='fIcon' style={[styles.fIcon]}>
+        <View style={[styles.fIconIcon]}>
+          <Image source={require('./img/alarm.png')} style={[styles.fIconImg]} />
+        </View>
+        <View style={[styles.fIconBadge]}>
+          <Text style={[styles.fIconBadgeTxt]}>0</Text>
+        </View>
       </View>
-    );
+    ]);
   }
 }

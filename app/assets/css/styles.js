@@ -14,9 +14,8 @@ const css = {
         flex: 1
     },
     document: {
-        // flex: 1,
-        borderWidth: 1,
-        borderColor: 'red'
+        flex: 1,
+        // borderWidth: 1, borderColor: 'red'
     },
     body: {
         borderWidth: 1,

@@ -14,8 +14,8 @@ import {
 import EStyleSheet from 'react-native-extended-stylesheet';
 import styles from './styles';
 
-//
-// import NotificationComponent from '../NotificationComponent';
+// Component(s)
+import NotificationComponent from '../NotificationComponent';
 
 /**
  * @class HomeComponent
@@ -37,6 +37,7 @@ export default class HomeComponent extends Component {
         style={[EStyleSheet.value('$document')]}
         contentContainerStyle={[EStyleSheet.value('$body')]}
       >
+        <NotificationComponent />
         <Text>HomeScreen</Text>
       </ScrollView>
     );
