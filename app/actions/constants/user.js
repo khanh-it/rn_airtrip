@@ -1,6 +1,3 @@
-/**
- * Define all common actions's constants
- */
 // @var String
 export const USER_ADD = 'USER_ADD';
 // @var String

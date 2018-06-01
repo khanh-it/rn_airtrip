@@ -1,18 +1,13 @@
 /**
- * 
+ * Lang
  */
 
 /**
  * 
- * @class Lang
+ * @param {String} text 
+ * @param {Object} params 
  */
-export default class Lang {
-    /**
-     * 
-     * @param {String} text 
-     * @param {Object} params 
-     */
-    static _(text, params) {
-        return text;
-    }
+function Lang(text, params) {
+    return text;
 }
+export default Lang;
