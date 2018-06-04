@@ -16,13 +16,7 @@ const ImageBackgroundAni = Animatable.createAnimatableComponent(ImageBackground)
 import styles from './styles';
 
 // Contants
-const ImgBgDir = '../../../assets/img/';
-const ImgBgArr = [
-  require(ImgBgDir + 'home_bg1.png'),
-  require(ImgBgDir + 'home_bg2.png'),
-  require(ImgBgDir + 'home_bg3.jpg'),
-  require(ImgBgDir + 'home_bg4.jpg')
-];
+import imgBgArr from './images';
 
 /**
  * @class ImgBgSliderComponent
@@ -31,7 +25,7 @@ export default class ImgBgSliderComponent extends Component {
   constructor(props) {
     super(props);
     // Init state
-    const imgIdx = ImgBgArr[props.imgIdx] ? props.imgIdx : 0;
+    const imgIdx = imgBgArr[props.imgIdx] ? props.imgIdx : 0;
     this.state = {
       imgIdx
     };
@@ -39,7 +33,7 @@ export default class ImgBgSliderComponent extends Component {
 
   render() {
     let { imgIdx, aniDelay } = this.state;
-    let imgSrc = ImgBgArr[imgIdx];
+    let imgSrc = imgBgArr[imgIdx];
     return (
       <ImageBackgroundAni
         key={new Date().toString() /* Force re-render */}
@@ -47,16 +41,16 @@ export default class ImgBgSliderComponent extends Component {
         resizeMode='cover'
         style={[styles.root]}
         animation='fadeIn'
-        duration={3000}
+        duration={2000}
         delay={0}
         onAnimationEnd={evt => {
           setTimeout(() => {
             this.setState(({ imgIdx }) => {
               ++imgIdx;
-              if (!ImgBgArr[imgIdx]) { imgIdx = 0; }
+              if (!imgBgArr[imgIdx]) { imgIdx = 0; }
               return { imgIdx };
             });
-          }, 2000);
+          }, 8000);
         }}
       />
     );

@@ -19,7 +19,8 @@ const css = {
         // borderWidth: 1, borderColor: 'yellow'
     },
     body: {
-        borderWidth: 1, borderColor: 'green'
+        flex: 1,
+        // borderWidth: 1, borderColor: 'green'
     }
 };
 const styles = EStyleSheet.create(css);

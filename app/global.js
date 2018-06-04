@@ -8,12 +8,8 @@ import xml2js from 'react-native-xml2js';
 // Init global styles
 export * from './assets/css/styles';
 
-// Project's environment
-const ENV = 'dev'; // dev | live.
-const isDEV = ('dev' === ENV);
-
 // Configs
-const configs = isDEV
+const configs = global.__DEV__
     ? require('./configs/env.dev.js')
     : require('./configs/env.live.js')
 ;
@@ -22,8 +18,6 @@ const configs = isDEV
  * Define project's global 
  */
 const $glob = {
-    // @var {String} Project development environment!
-    ENV,
     // @var {Object}
     configs,
     // @var {Object}

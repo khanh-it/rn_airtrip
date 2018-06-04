@@ -10,7 +10,7 @@ const styles = EStyleSheet.create({
         zIndex: 1,
         width: '100%',
         height: '100%',
-        borderWidth: 1, borderColor: 'pink'
+        // borderWidth: 1, borderColor: 'pink'
     }
 });
 export default styles;
