@@ -15,9 +15,10 @@ import styles from './styles';
 
 // Component(s)
 import ImgBgSliderComponent from './ImgBgSliderComponent';
-
-//
-import weblinks from './weblinks';
+import SearchHistoryComponent from './SearchHistoryComponent';
+import WeblinksComponent from './WeblinksComponent';
+import AdsComponent from './AdsComponent';
+import FooterNavComponent from './FooterNavComponent';
 
 /**
  * @class HomeComponent
@@ -37,7 +38,7 @@ export default class HomeComponent extends Component {
   /**
    * Page's header
    */
-  _renderPageHead() {
+  _renderPageHeader() {
     //
     let { auth } = this.state;
     //  
@@ -96,79 +97,25 @@ export default class HomeComponent extends Component {
     );
   }
 
-  _renderWeblinks() {
-    return (
-      <View style={[styles.weblinks]}>
-        <View style={[styles.weblinksBg]} />
-        <View style={[styles.weblinksContent]}>
-          <View style={[styles.wlArrow, styles.wlArrowL]}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                alert('wlArrowL')
-              }}
-            >
-              <Image
-                style={[styles.wlArrowImg, styles.wlArrowImgL]}
-                source={require('../../assets/img/arrow_left.png')}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-          <ScrollView
-            style={[styles.wlSlides]}
-            contentContainerStyle={[styles.wlSlidesContent]}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-          >
-          {weblinks.map((slide, idx) => {
-            return (
-              <TouchableWithoutFeedback
-                key={`slide-${idx}`}
-                onPress={() => {
-                  alert(slide.url);
-                }}
-              >
-                <View style={[styles.wlSlide]}>
-                  <Image style={[styles.wlSlideImg]} source={slide.img} resizeMode='contain' />
-                  <Text style={[styles.wlSlideTxt]}>
-                    {$g.Lang(slide.txt)}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-            );
-          })}  
-          </ScrollView>
-          <View style={[styles.wlArrow, styles.wlArrowR]}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                alert('wlArrowR')
-              }}
-            >
-              <Image
-                style={[styles.wlArrowImg, styles.wlArrowImgR]}
-                source={require('../../assets/img/arrow_right.png')}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
   render() {
     let { bgSrc } = this.state;
     return (
-      <View
-        style={[styles.body]}
-      >
-        <ImgBgSliderComponent />
-        <ScrollView
-          style={[styles.root]}
-          contentContainerStyle={[styles.page]}
-        >
-         {this._renderPageHead()}
-         {this._renderWeblinks()}
-        </ScrollView>
+      <View style={[styles.body]}>
+        <ImgBgSliderComponent key='bg' />
+        <View key='root' style={[styles.root]}>
+          <ScrollView
+            style={[styles.page]}
+            showsVerticalScrollIndicator={false}
+          >
+            {this._renderPageHeader()}
+            <WeblinksComponent key='weblinks' />
+            <SearchHistoryComponent key='search-history' />
+          </ScrollView>
+          <View key='footer' style={[styles.footer]}>
+            {/* <AdsComponent key='ads' /> */}
+            <FooterNavComponent key='footer-navigation' />
+          </View>
+        </View>
       </View>
     );
   }

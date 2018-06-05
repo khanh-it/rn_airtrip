@@ -4,9 +4,10 @@
 import EStyleSheet from 'react-native-extended-stylesheet';
 
 // global variables
-EStyleSheet.build({
-    $textColor: '#0275d8'
-});
+const vars = {
+    $textColor: '#0275d8',
+    $primaryBlue: '#3498db',
+};
 
 // global styles
 const css = {
@@ -27,7 +28,7 @@ const styles = EStyleSheet.create(css);
 export default styles;
 
 //
-EStyleSheet.build({
+EStyleSheet.build(Object.assign({}, vars, {
     $document: css['document'],
     $body: css['body']
-});
+}));

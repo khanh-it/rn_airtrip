@@ -7,28 +7,28 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 const styles = EStyleSheet.create({
     // Page
     page: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
+        flex: 1,
         zIndex: 9999,
-        width: '100%',
-        height: '100%',
-        borderWidth: 1, borderColor: 'blue'
+        // borderWidth: 1, borderColor: 'blue',
+        // opacity: 0,
+        // transform: [{ translateY: -$g.dimensions.screen.height }]
     },
     pageBg: {
         position: 'absolute',
         top: 0,
         left: 0,
+        zIndex: 1,
         width: '100%',
         height: '100%',
-        backgroundColor: 'grey',
-        opacity: 0.6
+        backgroundColor: 'black',
+        opacity: 0.9
     },
     pageRoot: {
-        flex: 1
+        flex: 1,
+        zIndex: 10
     },
     pageHead: {
-        padding: 12
+        padding: 10
     },
     pageTopbars: {
         paddingTop: 0,
@@ -39,7 +39,7 @@ const styles = EStyleSheet.create({
     pageIconClose: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 22
     },
     pageTitle: {
         paddingTop: 40,
@@ -48,7 +48,7 @@ const styles = EStyleSheet.create({
         height: 42,
         lineHeight: 42,
         borderRadius: 6,
-        backgroundColor: '#3498db',
+        backgroundColor: '$primaryBlue',
         color: 'white',
         textAlign: 'center'
     },
@@ -131,6 +131,7 @@ const styles = EStyleSheet.create({
     newsRead: {
         borderRightWidth: 1,
         borderRightColor: 'red',
+        opacity: 0.5
     },
     newsItem: {
         padding: 20
@@ -139,14 +140,18 @@ const styles = EStyleSheet.create({
         
     },
     newsMsg: {
-        flex: 1
+        flex: 1,
+    },
+    newsTxt: {
+        color: 'white',
+        fontSize: 16,
     },
     newsDetails: {
         alignItems: 'center'
     },
     newsDetailsIcon: {
         fontSize: 24,
-        color: '#3498db'
+        color: '$primaryBlue'
     }
     //.end
 });

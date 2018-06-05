@@ -1,7 +1,7 @@
 /**
  * 
  */
-import crypto from 'crypto';
+// import crypto from 'crypto';
 
 /**
  * Is string?
@@ -45,7 +45,7 @@ export function uniqueID() {
  * 
  * @return {String}
  */
-export function encryptPassword(password) {
+/* export function encryptPassword(password) {
     const hash = crypto.createHmac('sha256', encryptPassword.salt)
       .update(password)
       .digest('hex')
@@ -53,3 +53,4 @@ export function encryptPassword(password) {
     return hash;
 }
 encryptPassword.salt = '123-456-789';
+*/
