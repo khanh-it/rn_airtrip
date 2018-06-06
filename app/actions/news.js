@@ -20,20 +20,20 @@ export function newsAdd(data) {
 
 /**
  * Delete (remove) items
- * @param {String} id 
+ * @param {Number|String|Array} id 
  * @return {Object}
  */
-export function newsDel(id) {
-    return { type: NEWS_DEL, id };
+export function newsDel(data) {
+    return { type: NEWS_DEL, data };
 }
 
 /**
  * Edit item
- * @param {String} id 
+ * @param {Object|Array} data 
  * @return {Object}
  */
-export function newsEdit(id, data) {
-    return { type: NEWS_EDIT, id, data };
+export function newsEdit(data) {
+    return { type: NEWS_EDIT, data };
 }
 
 /**

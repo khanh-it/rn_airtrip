@@ -39,7 +39,7 @@ const styles = EStyleSheet.create({
     pageIconClose: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 22
+        fontSize: 16
     },
     pageTitle: {
         paddingTop: 40,
@@ -144,10 +144,16 @@ const styles = EStyleSheet.create({
     },
     newsTxt: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 14,
+    },
+    newsTxtUnread: {
+        fontSize: 12,
+        marginTop: 14,
+        color: '$primaryBlue'
     },
     newsDetails: {
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     newsDetailsIcon: {
         fontSize: 24,

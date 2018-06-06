@@ -4,16 +4,13 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 // +++
 import { store, persistor } from './app/configs/store';
-// +++
-import { View, ScrollView, Text } from 'react-native';
-// +++
+
+// Component(s)
+import RootComponent from './app/components/RootComponent';
 import HomeScreen from './app/components/HomeScreen';
 
-// Global styles
-import styles from './app/assets/css/styles';
-
 /**
- * 
+ * @class App
  */
 export default class App extends Component {
   constructor(props) {
@@ -25,11 +22,9 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <View style={[styles.html]}>
-            <View style={[styles.document]}>
-              <HomeScreen />
-            </View>
-          </View>
+          <RootComponent>
+            <HomeScreen />
+          </RootComponent>
         </PersistGate>
       </Provider>
     );
