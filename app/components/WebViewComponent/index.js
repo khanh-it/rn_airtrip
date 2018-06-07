@@ -15,6 +15,11 @@ import * as Ani from 'react-native-animatable';
 //
 import styles from './styles';
 
+//
+import injectedJavaScript from './injectedJavaScript';
+
+// https://github.com/facebook/react-native/blob/26684cf3adf4094eb6c405d345a75bf8c7c0bf88/RNTester/js/WebViewExample.js
+
 /**
  * @class WebViewComponent
  */
@@ -29,6 +34,7 @@ export default class WebViewComponent extends PureComponent {
     // Bind method(s)
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
+    this.onWebViewMessage = this.onWebViewMessage.bind(this);
   }
 
   show(url, opts = {}) {
@@ -43,11 +49,28 @@ export default class WebViewComponent extends PureComponent {
     }, opts.duration || 512);
   }
 
+  onWebViewMessage(event) {
+    console.log('onWebViewMessage: ', event);
+    // post back reply as soon as possible to enable sending the next message
+    this.myWebView.postMessage(event.nativeEvent.data);
+    let msgData;
+    try {
+        msgData = JSON.parse(event.nativeEvent.data);
+    }
+    catch(err) {
+        console.warn(err);
+        return;
+    }
+    // invoke target function
+    const response = this[msgData.targetFunc].apply(this, [msgData]);
+    // trigger success callback
+    msgData.isSuccessfull = true;
+    msgData.args = [response];
+    this.myWebView.postMessage(JSON.stringify(msgData))
+  }
+
   render() {
     let { children } = this.props;
-    let yourAlert = `
-      document.body.style.backgroundColor = 'red';
-    `;
     return (
       <Ani.View
         style={[styles.root]}
@@ -66,12 +89,14 @@ export default class WebViewComponent extends PureComponent {
         <View style={[styles.webview]}>
           <WebView
             style={[styles.webviewWV]}
-            ref={ref => { this._refWebView = ref; }}
+            ref={webview => { this.myWebView = webview; }}
+            onMessage={this.onWebViewMessage}
             source={{ uri: 'http://10.11.8.92/RN/rn_airtrip/API/' }}
-            injectedJavaScript={yourAlert}
+            injectedJavaScript={injectedJavaScript}
             javaScriptEnabled={true}
             domStorageEnabled={true}
             mixedContentMode={'compatibility'}
+            // onNavigationStateChange={(navEvent)=> console.log(navEvent.jsEvaluationValue)}
           />
         </View>
       </Ani.View>
