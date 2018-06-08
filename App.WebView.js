@@ -252,6 +252,20 @@ class MessagingTest extends React.Component {
   }
 }
 
+const script = `
+  var messagesReceivedFromReactNative = 0;
+  document.addEventListener('message', function(e) {
+    messagesReceivedFromReactNative += 1;
+    document.getElementsByTagName('p')[0].innerHTML =
+      'Messages received from React Native: ' + messagesReceivedFromReactNative;
+    document.getElementsByTagName('p')[1].innerHTML = e.data;
+  });
+
+  document.getElementsByTagName('button')[0].addEventListener('click', function() {
+    window.postMessage('"Hello" from the web view');
+  });
+`;
+
 export default class InjectJS extends React.Component {
   webview = null
 
@@ -286,6 +300,7 @@ export default class InjectJS extends React.Component {
     window.postMessage('"Hello" from the web view');
   });
 `;
+  return script;
     if (this.webview) {
       this.webview.injectJavaScript(script);
     }
@@ -312,6 +327,7 @@ export default class InjectJS extends React.Component {
             source={{ uri: 'http://10.11.8.92/RN/rn_airtrip/API/index.html' }}
             scalesPageToFit={true}
             onMessage={this.onMessage}
+            injectedJavaScript={script}
           />
         </View>
         <View style={styles.buttons}>
@@ -321,7 +337,6 @@ export default class InjectJS extends React.Component {
     );
   }
 }
-
 
 var styles = StyleSheet.create({
   container: {
