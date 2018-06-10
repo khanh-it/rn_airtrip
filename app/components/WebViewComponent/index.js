@@ -4,171 +4,205 @@ import React, { PureComponent } from 'react';
 import {
   View,
   Text,
-  WebView,
   TouchableOpacity,
-  Button
+  ActivityIndicator
 } from 'react-native';
 //
 import Ionicon from 'react-native-vector-icons/Ionicons';
 //
 import * as Ani from 'react-native-animatable';
 
-//
+// Css
 import styles from './styles';
 
 //
 import injectedJavaScript from './WebViewBridge';
+import HeadTitleComponent from './HeadTitleComponent';
+import WebViewLoadComponent from './WebViewLoadComponent';
 
 /**
  * @class WebViewComponent
  */
-export class WebViewComponent extends PureComponent {
+export default class WebViewComponent extends PureComponent {
 
   constructor(props) {
     super(props);
 
     // Init state
-    this.state = {};
+    this.state = {
+      // show/hide head more menu
+      showheadMenuMenu: false
+    };
 
     // Bind method(s)
-    this.show = this.show.bind(this);
-    this.hide = this.hide.bind(this);
-    this.onWebViewMessage = this.onWebViewMessage.bind(this);
+    this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
+    this.more = this.more.bind(this);
   }
 
-  show(url, opts = {}) {
-    this._reAniView.transitionTo({
+  componentDidMount() {
+    this.open(require('./index.html'));
+  }
+
+  open(source, opts = {}) {
+    let duration = (opts.duration || 512);
+    this.refAniViewRoot.transitionTo({
       opacity: 1, transform: [{ translateY: 0 }]
-    }, opts.duration || 512);
+    }, duration);
+    //
+    setTimeout(() => {
+      this.refWebViewWV.load(source);
+    }, duration);
   }
 
-  hide(opts = {}) {
-    this._reAniView.transitionTo({
+  close(opts = {}) {
+    let duration = (opts.duration || 512);
+    this.refAniViewRoot.transitionTo({
       opacity: 0, transform: [{ translateY: $g.dimensions.screen.height }]
-    }, opts.duration || 512);
+    }, duration);
+    //
+    setTimeout(() => {
+      this.refWebViewWV.load(null);
+    }, duration);
   }
 
-  onWebViewMessage(event) {
-    return alert('onWebViewMessage');
-    console.log('onWebViewMessage: ', event);
+  more(act = '') {
+    // show/hide more menu
+    const toggleMenu = () => {
+      this.state.showheadMenuMenu = !this.state.showheadMenuMenu;
+      this.refAniViewheadMenu.transitionTo({
+        opacity: this.state.showheadMenuMenu ? 1 : 0
+      });
+    };
+
+    switch (act) {
+      // reload
+      case 'reload': {
+        this.refWebView.reload();
+      } break;
+      // back
+      case 'back': {
+        this.refWebView.goBack();
+      } break;
+      // forward
+      case 'forward': {
+        this.refWebView.goForward();
+      } break;
+    }
+    // show/hide more menu?
+    toggleMenu();
+  }
+
+  onMessage(event) {
+    let msgData = event.nativeEvent.data;
     // post back reply as soon as possible to enable sending the next message
-    this.myWebView.postMessage(event.nativeEvent.data);
-    let msgData;
+    this.refWebView.postMessage(msgData);
     try {
-      msgData = JSON.parse(event.nativeEvent.data);
+      msgData = JSON.parse(msgData);
+      //
+      //switch (msgData.type) {}
+      //.end
     } catch(err) {
       console.warn(err);
-      return;
     }
-    // trigger success callback
     console.log('msgData: ', msgData);
-    this.myWebView.postMessage(JSON.stringify(msgData))
+    // trigger success callback
+    //...
+  }
+
+  onNavigationStateChange(event) {
+    // console.log('onNavigationStateChange: ', event);
+    // Update head title text
+    let { title } = event;
+    this.refHeadTitleComponent.updatetext(title);
+  }
+  
+
+  _renderHead() {
+    return ([
+      /*head*/
+      <View key='head' style={[styles.head]}>
+        <View style={[styles.headLR, styles.headL]}>
+          <TouchableOpacity onPress={this.close}>
+            <View><Ionicon name='md-close' style={[styles.headBtn, styles.btnClose]} /></View>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.headTitle]}>
+          <HeadTitleComponent
+            ref={ref => { this.refHeadTitleComponent = ref; }} 
+            style={[styles.titleTxt]}
+          />
+        </View>
+        <View style={[styles.headLR, styles.headR]}>
+          <TouchableOpacity onPress={this.more}>
+            <View><Ionicon name='md-more' style={[styles.headBtn, styles.btnMore]} /></View>
+          </TouchableOpacity>
+        </View>
+      </View>,
+      /*menu*/
+      <Ani.View
+        key='menu'
+        ref={ref => { this.refAniViewheadMenu = ref; }}
+        style={[styles.headMenu]}
+      >
+        <View style={[styles.headMenuItem]}>
+          <TouchableOpacity onPress={() => this.more('reload')}>
+            <View><Text style={[styles.headBtnTxt, styles.btnTxtReload]}>
+              <Ionicon name='md-refresh' style={[styles.headBtnIcon, styles.btnIconReload]} /> {$g.Lang('Reload')}
+            </Text></View>
+          </TouchableOpacity>    
+        </View>
+        <View style={[styles.headMenuItem]}>
+          <TouchableOpacity onPress={() => this.more('back')}>
+            <View><Text style={[styles.headBtnTxt, styles.btnTxtBack]}>
+              <Ionicon name='md-arrow-back' style={[styles.headBtnIcon, styles.btnIconBack]} /> {$g.Lang('Back')}
+            </Text></View>
+          </TouchableOpacity>    
+        </View>
+        <View style={[styles.headMenuItem]}>
+          <TouchableOpacity onPress={() => this.more('forward')}>
+            <View><Text style={[styles.headBtnTxt, styles.btnTxtForward]}>
+              <Ionicon name='md-arrow-forward' style={[styles.headBtnIcon, styles.btnIconForward]} /> {$g.Lang('Forward')}
+            </Text></View>
+          </TouchableOpacity>    
+        </View>
+      </Ani.View>
+    ]);
+  }
+
+  _renderWebView() {
+    return (
+      <View style={[styles.webview]}>
+        <WebViewLoadComponent
+          ref={ref => { this.refWebViewWV = ref; }}
+          wbref={ref => { this.refWebView = ref; }}
+          style={[styles.webviewWV]}
+          source={null}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          renderLoading={() => (<ActivityIndicator size="large" color="#0000ff" />)}
+          // mixedContentMode={'compatibility'}
+          // injectedJavaScript={injectedJavaScript} // <-- uses "onLoad"
+          onLoad={() => { this.refWebView.injectJavaScript(injectedJavaScript); }}
+          onMessage={this.onMessage.bind(this)}
+          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+        />
+      </View>
+    );
   }
 
   render() {
-    let { children } = this.props;
+    console.log('render WebViewComponent');
     return (
       <Ani.View
         style={[styles.root]}
-        ref={ref => { this._reAniView = ref; }}
+        ref={ref => { this.refAniViewRoot = ref; }}
       >
-        <View style={[styles.head]}>
-          <View style={[styles.headBtns]}>
-            <TouchableOpacity onPress={this.hide}>
-              <Ionicon name='md-close' style={[styles.headBtn, styles.btnClose]} />
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.headTitle]}>
-            <Text style={[styles.titleTxt]}>Title text</Text>
-          </View>
-        </View>
-        <View style={[styles.webview]}>
-          <WebView
-            style={[styles.webviewWV]}
-            ref={webview => { this.myWebView = webview; }}
-            source={{ uri: 'http://10.11.8.92/RN/rn_airtrip/API/' }}
-            onMessage={this.onWebViewMessage}
-            injectedJavaScript={injectedJavaScript}
-            // javaScriptEnabled={true}
-            // domStorageEnabled={true}
-            // mixedContentMode={'compatibility'}
-            // onNavigationStateChange={(navEvent)=> console.log(navEvent.jsEvaluationValue)}
-          />
-        </View>
+        {this._renderHead()}
+        {this._renderWebView()}
       </Ani.View>
     );
   }
 }
 
-export default class InjectJS extends React.Component {
-  webview = null
 
-  state = {
-    messagesReceivedFromWebView: 0,
-    message: '',
-  }
-
-  onMessage = e => this.setState({
-    messagesReceivedFromWebView: this.state.messagesReceivedFromWebView + 1,
-    message: e.nativeEvent.data,
-  })
-
-  postMessage = () => {
-    if (this.webview) {
-      this.webview.postMessage('"Hello" from React Native!');
-    }
-  }
-  
-  injectJS = () => {
-    // const script = 'document.write("Injected JS ")';
-    const script = `
-  var messagesReceivedFromReactNative = 0;
-  document.addEventListener('message', function(e) {
-    messagesReceivedFromReactNative += 1;
-    document.getElementsByTagName('p')[0].innerHTML =
-      'Messages received from React Native: ' + messagesReceivedFromReactNative;
-    document.getElementsByTagName('p')[1].innerHTML = e.data;
-  });
-
-  document.getElementsByTagName('button')[0].addEventListener('click', function() {
-    window.postMessage('"Hello" from the web view');
-  });
-`;
-  return script;
-    if (this.webview) {
-      this.webview.injectJavaScript(script);
-    }
-  }
-  render() {
-    const {messagesReceivedFromWebView, message} = this.state;
-    return (
-      <View style={[styles.root]}>
-        <View style={{ flex: 1, backgroundColor: 'white', }}>
-          <Text>Messages received from web view: {messagesReceivedFromWebView}</Text>
-          <Text>{message || '(No message)'}</Text>
-          <View style={styles.buttons}>
-            <Button title="Send Message to Web View" enabled onPress={this.postMessage} />
-          </View>
-        </View>
-        <View style={{ flex: 1 }}>
-          <WebView
-            ref={webview => { this.webview = webview; }}
-            style={{
-              // backgroundColor: 'grey',
-              height: 300,
-            }}
-            // source={{uri: 'https://www.facebook.com'}}
-            source={{ uri: 'http://10.11.8.92/RN/rn_airtrip/API/index.html' }}
-            scalesPageToFit={true}
-            onMessage={this.onMessage}
-            injectedJavaScript={injectedJavaScript}
-            onLoad={this.postMessage.bind(this)}
-          />
-        </View>
-        <View style={styles.buttons}>
-          <Button title="Inject JS" enabled onPress={this.injectJS} />
-        </View>
-    </View>
-    );
-  }
-}

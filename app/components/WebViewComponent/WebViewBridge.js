@@ -4,7 +4,7 @@
  *  This is a sample provides an API to send & receive messages to and from the React-Native WebView (using postMessage/onMessage WebView API).
  *  A sample project that uses the bridge is available here https://github.com/blankg/rn-webview-bridge-sample
  *
- *  webViewBridge.send('functionToInvoke', {mydata: 'test'}, function(){debugLog('success')},function(){debugLog('error')});
+ *  webViewBridgevt.send('functionToInvoke', {mydata: 'test'}, function(){debugLog('success')},function(){debugLog('error')});
  *
  *  The API is designed to be similar to the Cordova exec API so migration to it should be almost seamless.
  *  The API also provides solution to a React-Native WebView bug in iOS which causes sending consecutive postMessage calls to override each other.
@@ -24,7 +24,7 @@
  *          msgData = JSON.parse(event.nativeEvent.data);
  *      }
  *      catch(err) {
- *          console.warn(err);
+ *          consolevt.warn(err);
  *          return;
  *      }
  *
@@ -54,6 +54,9 @@ function debugLogDiv() {
         div.style.minHeight = '10';
         div.style.backgroundColor = 'yellow'
         div.style.color = 'black';
+        div.style.fontSize = '80%';
+        div.style.maxHeight = '150px';
+        div.style.overflow = 'scroll';
         // 
         document.body.appendChild(div);
     }
@@ -63,7 +66,7 @@ function debugLogDiv() {
 //
 function debugLog(msg) {
     // Init
-    var cls = (debugLog = debugLog);
+    var cls = (window.debugLog = debugLog);
     // @var {number} idx 
     cls.del = cls.del || function(idx) {
         cls.msgs.splice(idx, 1);
@@ -95,20 +98,23 @@ function debugLog(msg) {
  * @class WebViewBridge
  */
 function WebViewBridge() {
+    // Self assign;
+    var self = this;
     /**
      * @var {Object}
      */
-    this._callbacks = {};
+    self._callbacks = {};
 
     /**
      * 
      */
-    this.s4 = function () {
+    self.s4 = function () {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     };
 
-    this.guid = function () {
-        return this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4();
+    self.guid = function () {
+        // return self.s4() + self.s4() + "-" + self.s4() + "-" + self.s4() + "-" + self.s4() + "-" + self.s4() + self.s4() + self.s4();
+        return ((new Date()).getTime() + Math.random()).toString();
     };
 
     /**
@@ -116,38 +122,38 @@ function WebViewBridge() {
      * @param {mixed} data Data to pass
      * @param {Function} callback
      */
-    this.send = function(data, callback) {
+    self.send = function(data, callback) {
         // Format input
         var msgObj = (data = ((typeof data === 'object') ? data : {}));
-        msgObj._id = this.guid();
+        msgObj._id = self.guid();
         //
         try {
             if (typeof callback === 'function') {
-                this._callbacks[msgObj._id] = callback;
+                self._callbacks[msgObj._id] = callback;
             }
             msgObj = (typeof msgObj === 'string') ? msgObj : JSON.stringify(msgObj);
-            window.postMessage(msgObj/*, '*'*/);
+            window.postMessage(msgObj);
             debugLog('WVB sent: ' + msgObj);
-        } catch (e) {
-            debugLog('WVB send failed: ' + e.message);
+        } catch (err) {
+            debugLog('WVB send failed: ' + err.message);
         }
     };
 
     /**
      * 
      */
-    (this._bindEvents = function () {
-        document.addEventListener('message', function(e) {
+    (self._bindEvents = function () {
+        document.addEventListener('message', function(evt) {
             try {
-                var msg = JSON.parse(e.data);
+                var msg = JSON.parse(evt.data);
                 // trigger callback?
-                var callback = this._callbacks[msg._id];
+                var callback = self._callbacks[msg._id];
                 if (callback) {
                     callback(msg.error, msg);
-                    delete this._callbacks[msg._id];
+                    delete self._callbacks[msg._id];
                 }
-            }
-            catch(err) {
+                debugLog("msg from react-native: " + evt.data);
+            } catch(err) {
                 debugLog("Failed to parse msg from react-native: " + err);
             }
         });
@@ -161,7 +167,7 @@ function WebViewComponent() {
     try {
         //
         WVB.send({
-            type: 'web_info',
+            type: 'webpage_info',
             document: {
                 title: document.title,
                 cookie: document.cookie
@@ -178,16 +184,14 @@ function WebViewComponent() {
         });
         // debugLog('WebViewComp sent!');
         alert('WebViewComp sent!');
-    } catch (e) {
-        // debugLog('WebViewComponent err: ' + e.message);
-        alert('WebViewComponent err: ' + e.message);
+    } catch (err) {
+        debugLog('WebViewComponent err: ' + err.message);
     }
     //.end
 };
 
 //
 const injectedJavaScript = `(function(){
-    return;
     /* Debug tools */
     ${debugLogDiv};
     ${debugLog};
@@ -195,41 +199,16 @@ const injectedJavaScript = `(function(){
     
     /* WebViewBridge */
     ${WebViewBridge};
-    (${WebViewComponent})();
+    ${WebViewComponent};
     /*.end*/
+
+    var button = document.getElementsByTagName('button')[0];
+    button.addEventListener('click', function() {
+        WebViewComponent();
+    });
+    button.click();
+    
     debugLog('injectedJS is working..!');
 })();`;
-// console.log(injectedJavaScript);
-// export default injectedJavaScript;
-
-const script = `(function(){
-    /* Debug tools */
-    ${debugLogDiv};
-    ${debugLog};
-    /*.end*/
-
-  var messagesReceivedFromReactNative = 0;
-  document.addEventListener('message', function(e) {
-    messagesReceivedFromReactNative += 1;
-    document.getElementsByTagName('p')[0].innerHTML =
-      'Messages received from React Native: ' + messagesReceivedFromReactNative;
-    document.getElementsByTagName('p')[1].innerHTML = e.data;
-
-    if (1 === messagesReceivedFromReactNative) {
-        WebViewComponent();
-    }
-  });
-
-  ${WebViewBridge};
-  ${WebViewComponent};
-  var button = document.getElementsByTagName('button')[0];
-  button.click();
-  button.addEventListener('click', function() {
-    /* window.postMessage('"Hello" from the web view'); */
-    WebViewComponent();
-  });
-    alert('before');
-    WebViewComponent();
-    alert('after');
-})();`;
-export default script;
+// consolevt.log(injectedJavaScript);
+export default injectedJavaScript;

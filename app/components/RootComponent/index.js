@@ -18,7 +18,7 @@ export default class RootComponent extends PureComponent {
       return (
         <View style={[styles.html]}>
           <View style={[styles.document]}>
-            {children}
+            {/* children */}
             <WebViewComponent ref={ref => {
               // Public webview util.
               $g.utils.WebView = (this._refWebView = ref);
