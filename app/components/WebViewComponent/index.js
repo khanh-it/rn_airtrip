@@ -1,208 +1,123 @@
 //
 import React, { PureComponent } from 'react';
 //
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator
-} from 'react-native';
-//
-import Ionicon from 'react-native-vector-icons/Ionicons';
-//
-import * as Ani from 'react-native-animatable';
+import { View } from 'react-native';
 
 // Css
 import styles from './styles';
 
-//
-import injectedJavaScript from './WebViewBridge';
-import HeadTitleComponent from './HeadTitleComponent';
-import WebViewLoadComponent from './WebViewLoadComponent';
+// Component(s)
+import WebViewComponent from './WebViewComponent';
 
 /**
  * @class WebViewComponent
  */
-export default class WebViewComponent extends PureComponent {
+export default class WebViewRoot extends PureComponent {
 
   constructor(props) {
     super(props);
 
     // Init state
     this.state = {
-      // show/hide head more menu
-      showheadMenuMenu: false
+      webviews: [] // list of webviews
     };
 
     // Bind method(s)
     this.open = this.open.bind(this);
+    this.hide = this.hide.bind(this);
     this.close = this.close.bind(this);
-    this.more = this.more.bind(this);
+    this.onWebViewClose = this.onWebViewClose.bind(this);
   }
 
-  componentDidMount() {
-    this.open(require('./index.html'));
+  static guid() {
+    return ((new Date()).getTime() + Math.random()).toString();
   }
 
-  open(source, opts = {}) {
-    let duration = (opts.duration || 512);
-    this.refAniViewRoot.transitionTo({
-      opacity: 1, transform: [{ translateY: 0 }]
-    }, duration);
-    //
-    setTimeout(() => {
-      this.refWebViewWV.load(source);
-    }, duration);
-  }
+  componentDidMount() {}
 
-  close(opts = {}) {
-    let duration = (opts.duration || 512);
-    this.refAniViewRoot.transitionTo({
-      opacity: 0, transform: [{ translateY: $g.dimensions.screen.height }]
-    }, duration);
-    //
-    setTimeout(() => {
-      this.refWebViewWV.load(null);
-    }, duration);
-  }
-
-  more(act = '') {
-    // show/hide more menu
-    const toggleMenu = () => {
-      this.state.showheadMenuMenu = !this.state.showheadMenuMenu;
-      this.refAniViewheadMenu.transitionTo({
-        opacity: this.state.showheadMenuMenu ? 1 : 0
-      });
-    };
-
-    switch (act) {
-      // reload
-      case 'reload': {
-        this.refWebView.reload();
-      } break;
-      // back
-      case 'back': {
-        this.refWebView.goBack();
-      } break;
-      // forward
-      case 'forward': {
-        this.refWebView.goForward();
-      } break;
+  onWebViewClose(webview) {
+    if (webview instanceof WebViewComponent) {
+      let { webviews } = this.state;
+      let index = (webviews || []).findIndex(item => (item.webview === webview));
+      if (index >= 0) {
+        webviews.splice(index, 1);
+        console.log('close webviews: ', webviews);
+        this.setState(() => ({ webviews }));
+      }
     }
-    // show/hide more menu?
-    toggleMenu();
   }
 
-  onMessage(event) {
-    let msgData = event.nativeEvent.data;
-    // post back reply as soon as possible to enable sending the next message
-    this.refWebView.postMessage(msgData);
-    try {
-      msgData = JSON.parse(msgData);
-      //
-      //switch (msgData.type) {}
-      //.end
-    } catch(err) {
-      console.warn(err);
-    }
-    console.log('msgData: ', msgData);
-    // trigger success callback
-    //...
-  }
+  open(props = {}, opts = {}) {
+    let { webviews } = this.state;
+    // Format input
+    // ...
 
-  onNavigationStateChange(event) {
-    // console.log('onNavigationStateChange: ', event);
-    // Update head title text
-    let { title } = event;
-    this.refHeadTitleComponent.updatetext(title);
-  }
-  
-
-  _renderHead() {
-    return ([
-      /*head*/
-      <View key='head' style={[styles.head]}>
-        <View style={[styles.headLR, styles.headL]}>
-          <TouchableOpacity onPress={this.close}>
-            <View><Ionicon name='md-close' style={[styles.headBtn, styles.btnClose]} /></View>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.headTitle]}>
-          <HeadTitleComponent
-            ref={ref => { this.refHeadTitleComponent = ref; }} 
-            style={[styles.titleTxt]}
-          />
-        </View>
-        <View style={[styles.headLR, styles.headR]}>
-          <TouchableOpacity onPress={this.more}>
-            <View><Ionicon name='md-more' style={[styles.headBtn, styles.btnMore]} /></View>
-          </TouchableOpacity>
-        </View>
-      </View>,
-      /*menu*/
-      <Ani.View
-        key='menu'
-        ref={ref => { this.refAniViewheadMenu = ref; }}
-        style={[styles.headMenu]}
-      >
-        <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('reload')}>
-            <View><Text style={[styles.headBtnTxt, styles.btnTxtReload]}>
-              <Ionicon name='md-refresh' style={[styles.headBtnIcon, styles.btnIconReload]} /> {$g.Lang('Reload')}
-            </Text></View>
-          </TouchableOpacity>    
-        </View>
-        <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('back')}>
-            <View><Text style={[styles.headBtnTxt, styles.btnTxtBack]}>
-              <Ionicon name='md-arrow-back' style={[styles.headBtnIcon, styles.btnIconBack]} /> {$g.Lang('Back')}
-            </Text></View>
-          </TouchableOpacity>    
-        </View>
-        <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('forward')}>
-            <View><Text style={[styles.headBtnTxt, styles.btnTxtForward]}>
-              <Ionicon name='md-arrow-forward' style={[styles.headBtnIcon, styles.btnIconForward]} /> {$g.Lang('Forward')}
-            </Text></View>
-          </TouchableOpacity>    
-        </View>
-      </Ani.View>
-    ]);
-  }
-
-  _renderWebView() {
-    return (
-      <View style={[styles.webview]}>
-        <WebViewLoadComponent
-          ref={ref => { this.refWebViewWV = ref; }}
-          wbref={ref => { this.refWebView = ref; }}
-          style={[styles.webviewWV]}
-          source={null}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          renderLoading={() => (<ActivityIndicator size="large" color="#0000ff" />)}
-          // mixedContentMode={'compatibility'}
-          // injectedJavaScript={injectedJavaScript} // <-- uses "onLoad"
-          onLoad={() => { this.refWebView.injectJavaScript(injectedJavaScript); }}
-          onMessage={this.onMessage.bind(this)}
-          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+    // spawn new webview
+    let key = WVComp.guid();
+    let wvItem = {
+      key,
+      webview: null,
+      component: (
+        <WebViewComponent
+          {...props}
+          key={key}
+          ref={ref => {
+            wvItem.webview = ref;
+            if (props.ref) {
+              props.ref(ref);
+            }
+          }}
+          onClose={this.onWebViewClose}
         />
-      </View>
-    );
+      )
+    };
+    webviews = webviews.concat([wvItem]);
+    //
+    this.setState(() => ({ webviews }));
+    // Return
+    return wvItem;
+  }
+
+  hide() {
+
+  }
+
+  close(wvItem, opts = {}) {
+    let key = '';
+    let component = null;
+    if (typeof wvItem === 'string') {
+      key = wvItem;
+    }
+    if (wvItem instanceof WebViewComponent) {
+      component = wvItem;
+    }
+    if (typeof wvItem === 'object') {
+      key = wvItem.key;
+      component = wvItem.component;
+    }
+    // 
+    let foundWVItem = null;
+    if (key || component) {
+      let { webviews } = this.state;
+      foundWVItem = (webviews || []).find(item => ((item.key === key) || (item.component === component)));
+    }
+    if (!foundWVItem) {
+      return alert('`wvtem` not found!');
+    }
+    //
+    let { webview } = foundWVItem;
+    return webview.close(opts);
   }
 
   render() {
-    console.log('render WebViewComponent');
+    console.log('render WebViewRoot');
+    let { webviews } = this.state;
     return (
-      <Ani.View
-        style={[styles.root]}
-        ref={ref => { this.refAniViewRoot = ref; }}
-      >
-        {this._renderHead()}
-        {this._renderWebView()}
-      </Ani.View>
+      <View style={[styles.root]}>
+      {webviews.map(({ component }) => (component))}
+      </View>
     );
   }
 }
-
-
+// Make alias
+const WVComp = WebViewRoot;

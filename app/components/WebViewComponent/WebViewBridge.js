@@ -196,17 +196,10 @@ const injectedJavaScript = `(function(){
     ${debugLogDiv};
     ${debugLog};
     /*.end*/
-    
     /* WebViewBridge */
     ${WebViewBridge};
     ${WebViewComponent};
     /*.end*/
-
-    var button = document.getElementsByTagName('button')[0];
-    button.addEventListener('click', function() {
-        WebViewComponent();
-    });
-    button.click();
     
     debugLog('injectedJS is working..!');
 })();`;

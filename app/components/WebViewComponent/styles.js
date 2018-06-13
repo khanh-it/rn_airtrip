@@ -4,6 +4,9 @@
 import EStyleSheet from 'react-native-extended-stylesheet';
 
 //
+const zIndexRoot = 999;
+
+//
 const styles = EStyleSheet.create({
     root: {
         position: 'absolute',
@@ -11,7 +14,16 @@ const styles = EStyleSheet.create({
         height: '100%',
         top: 0,
         left: 0,
-        zIndex: 9999,
+        zIndex: zIndexRoot,
+    },
+    wv: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        zIndex: zIndexRoot + 1,
+        borderWidth: 1, borderColor: 'red',
         opacity: 0,
         transform: [{ translateY: $g.dimensions.screen.height }]
     },
