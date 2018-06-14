@@ -40,8 +40,13 @@ export default class WebViewRoot extends PureComponent {
       let { webviews } = this.state;
       let index = (webviews || []).findIndex(item => (item.webview === webview));
       if (index >= 0) {
+        // Reset data
+        let wvItem = webviews[index] || {};
+        for (let prop in wvItem) {
+          wvItem[prop] = null;
+        }
         webviews.splice(index, 1);
-        console.log('close webviews: ', webviews);
+        webviews = webviews.concat([]); // <-- trigger state changes
         this.setState(() => ({ webviews }));
       }
     }
@@ -54,23 +59,20 @@ export default class WebViewRoot extends PureComponent {
 
     // spawn new webview
     let key = WVComp.guid();
-    let wvItem = {
-      key,
-      webview: null,
-      component: (
-        <WebViewComponent
-          {...props}
-          key={key}
-          ref={ref => {
-            wvItem.webview = ref;
-            if (props.ref) {
-              props.ref(ref);
-            }
-          }}
-          onClose={this.onWebViewClose}
-        />
-      )
-    };
+    let component = (
+      <WebViewComponent
+        {...props}
+        key={key}
+        ref={ref => {
+          wvItem.webview = ref;
+          if (props.ref) {
+            props.ref(ref);
+          }
+        }}
+        onClose={this.onWebViewClose}
+      />
+    );
+    let wvItem = { key, webview: null, component };
     webviews = webviews.concat([wvItem]);
     //
     this.setState(() => ({ webviews }));

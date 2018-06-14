@@ -17,7 +17,7 @@ import * as Ani from 'react-native-animatable';
 import styles from './styles';
 
 //
-import injectedJavaScript from './WebViewBridge';
+import injectedJS from './WebViewBridge';
 import HeadTitleComponent from './HeadTitleComponent';
 
 /**
@@ -38,6 +38,7 @@ export default class WebViewComponent extends PureComponent {
 
     // Bind method(s)
     this.open = this.open.bind(this);
+    this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
     this.close = this.close.bind(this);
     this.more = this.more.bind(this);
@@ -51,15 +52,22 @@ export default class WebViewComponent extends PureComponent {
   }
 
   open(source, opts = {}) {
+    this.show(() => {
+      if (typeof source === 'object') {
+        this.setState({ source });
+      }
+    }, opts);
+  }
+
+  show(cb, opts = {}) {
     let duration = (opts.duration || 512);
     this.refAniViewRoot.transitionTo({
       opacity: 1, transform: [{ translateY: 0 }]
     }, duration);
-    // delay load
-    setTimeout(() => {
-      // this.refWebViewWV.load(source);
-      this.setState(() => ({ source }));
-    }, duration + 64);
+    // Fire callback?
+    if (cb) {
+      setTimeout(cb, duration + 64);
+    }
   }
 
   hide(cb, opts = {}) {
@@ -75,8 +83,7 @@ export default class WebViewComponent extends PureComponent {
 
   close(opts = {}) {
     this.hide(() => {
-      // this.refWebViewWV.load(null);
-      this.setState(() => ({ source: null }));
+      this.setState({ source: null });
       // Self destroy?!
       if (this.props.onClose) {
         this.props.onClose(this);
@@ -134,7 +141,6 @@ export default class WebViewComponent extends PureComponent {
     let { title } = event;
     this.refHeadTitleComponent.updatetext(title);
   }
-  
 
   _renderHead() {
     return ([
@@ -190,7 +196,6 @@ export default class WebViewComponent extends PureComponent {
 
   _renderWebView() {
     let { source } = this.state;
-    console.log(source);
     return (
       <View style={[styles.webview]}>
         <WebView
@@ -201,8 +206,8 @@ export default class WebViewComponent extends PureComponent {
           startInLoadingState={true}
           renderLoading={() => (<ActivityIndicator size="large" color="#0000ff" />)}
           // mixedContentMode={'compatibility'}
-          // injectedJavaScript={injectedJavaScript} // <-- uses "onLoad"
-          onLoad={() => { this.refWebView.injectJavaScript(injectedJavaScript); }}
+          // injectedJavaScript={injectedJS()} // <-- uses "onLoad"
+          onLoad={() => { this.refWebView.injectJavaScript(injectedJS()); }}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
         />

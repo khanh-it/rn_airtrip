@@ -23,14 +23,16 @@ const styles = EStyleSheet.create({
         top: 0,
         left: 0,
         zIndex: zIndexRoot + 1,
-        borderWidth: 1, borderColor: 'red',
+        // borderWidth: 1, borderColor: 'red',
         opacity: 0,
         transform: [{ translateY: $g.dimensions.screen.height }]
     },
     head: {
         height: 50,
         backgroundColor: '$primaryBlue',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: 'silver'
     },
     headLR: {
         width: 50,
@@ -81,8 +83,7 @@ const styles = EStyleSheet.create({
         // borderWidth: 2, borderColor: 'blue'
     },
     webviewWV: {
-        flex: 1,
-        flexGrow: 1
+        minHeight: '45%'
     }
     //.end
 });
