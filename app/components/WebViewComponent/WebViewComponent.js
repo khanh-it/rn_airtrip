@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 import {
   View,
   Text,
+  TouchableWithoutFeedback,
   TouchableOpacity,
   ActivityIndicator,
   WebView
@@ -12,6 +13,10 @@ import {
 import Ionicon from 'react-native-vector-icons/Ionicons';
 //
 import * as Ani from 'react-native-animatable';
+//
+import {
+  WebViewExtended
+} from 'react-native-my'
 
 // Css
 import styles from './styles';
@@ -119,18 +124,18 @@ export default class WebViewComponent extends PureComponent {
   }
 
   onMessage(event) {
-    let msgData = event.nativeEvent.data;
+    let msgObj = event.nativeEvent.data;
     // post back reply as soon as possible to enable sending the next message
-    this.refWebView.postMessage(msgData);
+    this.refWebView.postMessage(msgObj);
     try {
-      msgData = JSON.parse(msgData);
+      msgObj = JSON.parse(msgObj);
       //
-      //switch (msgData.type) {}
+      //switch (msgObj.type) {}
       //.end
     } catch(err) {
       console.warn(err);
     }
-    console.log('msgData: ', msgData);
+    // console.log('msgObj: ', msgObj);
     // trigger success callback
     //...
   }
@@ -170,25 +175,40 @@ export default class WebViewComponent extends PureComponent {
         style={[styles.headMenu]}
       >
         <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('reload')}>
-            <View><Text style={[styles.headBtnTxt, styles.btnTxtReload]}>
-              <Ionicon name='md-refresh' style={[styles.headBtnIcon, styles.btnIconReload]} /> {$g.Lang('Reload')}
-            </Text></View>
-          </TouchableOpacity>    
-        </View>
-        <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('back')}>
+          <TouchableOpacity
+            style={[styles.headMenuTouch]}
+            onPress={() => this.more('back')}
+          >
             <View><Text style={[styles.headBtnTxt, styles.btnTxtBack]}>
-              <Ionicon name='md-arrow-back' style={[styles.headBtnIcon, styles.btnIconBack]} /> {$g.Lang('Back')}
+              <Ionicon name='md-arrow-back' style={[styles.headBtnIcon, styles.btnIconBack]} />
             </Text></View>
-          </TouchableOpacity>    
-        </View>
-        <View style={[styles.headMenuItem]}>
-          <TouchableOpacity onPress={() => this.more('forward')}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.headMenuTouch]}
+            onPress={() => this.more('reload')}
+          >
+            <View><Text style={[styles.headBtnTxt, styles.btnTxtReload]}>
+              <Ionicon name='md-refresh' style={[styles.headBtnIcon, styles.btnIconReload]} />
+            </Text></View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.headMenuTouch]}
+            onPress={() => this.more('forward')}
+          >
             <View><Text style={[styles.headBtnTxt, styles.btnTxtForward]}>
-              <Ionicon name='md-arrow-forward' style={[styles.headBtnIcon, styles.btnIconForward]} /> {$g.Lang('Forward')}
+              <Ionicon name='md-arrow-forward' style={[styles.headBtnIcon, styles.btnIconForward]} />
             </Text></View>
-          </TouchableOpacity>    
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.headMenuLink]}>
+          <TouchableOpacity
+            style={[styles.headMenuTouch]}
+            onPress={() => alert('copy link (WIP)...')}
+          >
+            <View><Text style={[styles.headBtnTxt, styles.btnTxtForward]}>
+              <Ionicon name='md-arrow-forward' style={[styles.headBtnIcon, styles.btnIconForward]} /> {$g.Lang('Copy link')}
+            </Text></View>
+          </TouchableOpacity>
         </View>
       </Ani.View>
     ]);
@@ -197,16 +217,21 @@ export default class WebViewComponent extends PureComponent {
   _renderWebView() {
     let { source } = this.state;
     return (
-      <View style={[styles.webview]}>
-        <WebView
-          ref={ref => { this.refWebView = ref; }}
+      <View style={[styles.webview]}        >
+        <WebViewExtended
+          wvref={ref => { this.refWebView = ref; }}
           style={[styles.webviewWV]}
           source={source}
           domStorageEnabled={true}
           startInLoadingState={true}
-          renderLoading={() => (<ActivityIndicator size="large" color="#0000ff" />)}
+          renderLoading={() => (
+            <View style={[styles.loading]}>
+              <ActivityIndicator size="large" color={$g.EStyleSheet.value('$primaryBlue')} />
+            </View>
+          )}
           // mixedContentMode={'compatibility'}
           // injectedJavaScript={injectedJS()} // <-- uses "onLoad"
+          // onScroll={(event) => { console.log('onScroll: ', event); }}
           onLoad={() => { this.refWebView.injectJavaScript(injectedJS()); }}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}

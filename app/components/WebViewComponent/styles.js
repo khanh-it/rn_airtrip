@@ -67,6 +67,19 @@ const styles = EStyleSheet.create({
         padding: 10,
         opacity: 0
     },
+    headMenuItem: {
+        flexDirection: 'row',
+    },
+    headMenuTouch: {
+        marginRight: 5,
+        marginLeft: 5,
+        paddingRight: 5,
+        paddingLeft: 5,
+        // borderWidth: 1, borderColor: 'red'
+    },
+    headMenuLink: {
+
+    },
     headBtnTxt: {
         fontSize: 18,
         paddingTop: 6,
@@ -75,7 +88,6 @@ const styles = EStyleSheet.create({
     headBtnIcon: {
         fontSize: 18,
     },
-
     // webview
     webview: {
         flex: 1,
@@ -83,7 +95,16 @@ const styles = EStyleSheet.create({
         // borderWidth: 2, borderColor: 'blue'
     },
     webviewWV: {
-        minHeight: '45%'
+        // minHeight: '45%'
+    },
+    loading: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: 0, left: 0,
+        zIndex: zIndexRoot + 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
     //.end
 });

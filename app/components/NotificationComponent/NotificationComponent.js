@@ -1,7 +1,7 @@
 /**
  * 
  */
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 //
 import {
   View,
@@ -23,7 +23,7 @@ import * as constants from './constants';
 /**
  * @class NotificationComponent
  */
-export default class NotificationComponent extends Component {
+export default class NotificationComponent extends PureComponent {
   constructor(props) {
     super(props);
     // Init state
@@ -116,7 +116,11 @@ export default class NotificationComponent extends Component {
    * @param {*} news 
    */
   handleViewNewsDetails(news, index) {
-    alert(news.link[0]);
+    // open + view link on webview
+    $g.utils.WebView.open({
+      source: { uri: news.link[0] }
+    });
+    // mark as read
     this.handleMarkAllRead(news);
   }
 

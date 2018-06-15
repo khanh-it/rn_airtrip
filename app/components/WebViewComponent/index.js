@@ -73,15 +73,15 @@ export default class WebViewRoot extends PureComponent {
       />
     );
     let wvItem = { key, webview: null, component };
-    webviews = webviews.concat([wvItem]);
     //
-    this.setState(() => ({ webviews }));
+    webviews = webviews.concat([wvItem]); // <-- trigger state change
+    this.setState({ webviews });
     // Return
     return wvItem;
   }
 
   hide() {
-
+    alert('not yet implemented!');
   }
 
   close(wvItem, opts = {}) {
@@ -112,12 +112,13 @@ export default class WebViewRoot extends PureComponent {
   }
 
   render() {
-    console.log('render WebViewRoot');
     let { webviews } = this.state;
-    return (
-      <View style={[styles.root]}>
+    console.log('render WebViewRoot', webviews.length);
+    return (webviews.length
+      ? (<View style={[styles.root]}>
       {webviews.map(({ component }) => (component))}
-      </View>
+      </View>)
+      : null
     );
   }
 }

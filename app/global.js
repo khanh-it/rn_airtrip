@@ -1,6 +1,8 @@
 //
 import { Dimensions } from 'react-native';
 //
+import EStyleSheet from 'react-native-extended-stylesheet';
+//
 import xml2js from 'react-native-xml2js';
 //
 import Lang from './helpers/lang';
@@ -35,7 +37,9 @@ Object.assign(global, {
   dimensions: {
     window: Dimensions.get('window'),
     screen: Dimensions.get('screen')
-  }
+  },
+  // @var {Object}
+  EStyleSheet
 });
 // Event Listener for orientation changes
 Dimensions.addEventListener('change', (dimensions) => {
