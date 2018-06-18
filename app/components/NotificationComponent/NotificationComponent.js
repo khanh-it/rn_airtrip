@@ -30,7 +30,8 @@ export default class NotificationComponent extends PureComponent {
     this.state = {
       show: !!props.show,
       duration: 512,
-      fetchNewsFeedInterval: 1000 * 60 * 1, // 5m
+      // @see https://github.com/facebook/react-native/issues/12981
+      fetchNewsFeedInterval: 1000 * (60 * 1),
       // news feed data
       news: props.news || {}
     };
@@ -48,23 +49,26 @@ export default class NotificationComponent extends PureComponent {
   /**
    * @var {Number|String}
    */
-  _fetchNewsFeedInterval = null;
+  _fetchNewsFeedTimer = null;
 
   componentDidMount() {
-    let { storeNewsData } = this.props;
     let { fetchNewsFeedInterval } = this.state;
 
     // Fetch news feed
-    this._fetchNewsFeedInterval = setInterval(async () => {
-      let { news } = this.state;
-      let newsData = await this.fetchNewsFeed();
-      storeNewsData(newsData);
-    }, fetchNewsFeedInterval);
+    let fetchNewsFeed = async () => {
+      let { storeNewsData } = this.props;
+      let data = await this.fetchNewsFeed();
+      console.log('newsData: ', data.length);
+      storeNewsData(data);
+      // Run interval!
+      this._fetchNewsFeedTimer = setTimeout(fetchNewsFeed, fetchNewsFeedInterval);
+    };
+    fetchNewsFeed();
     //.end
   }
 
   componentWillUnmount() {
-    clearInterval(this._fetchNewsFeedInterval);
+    clearTimeout(this._fetchNewsFeedTimer);
   }
 
   /**
@@ -117,11 +121,9 @@ export default class NotificationComponent extends PureComponent {
    */
   handleViewNewsDetails(news, index) {
     // open + view link on webview
-    $g.utils.WebView.open({
-      source: { uri: news.link[0] }
-    });
+    $g.utils.WebView.open({ uri: news.link[0] });
     // mark as read
-    this.handleMarkAllRead(news);
+    // this.handleMarkAllRead(news);
   }
 
   /**
@@ -133,7 +135,7 @@ export default class NotificationComponent extends PureComponent {
       <FlatList
         style={[styles.newsList]}
         data={(news.data || [])}
-        keyExtractor={(item, index) => `news-${index}`}
+        keyExtractor={(item, index) => `news-${item.id}`}
         renderItem={({ item, index }) => {
           return (
             <TouchableOpacity

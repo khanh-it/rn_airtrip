@@ -14,6 +14,10 @@ import WebViewComponent from './WebViewComponent';
  */
 export default class WebViewRoot extends PureComponent {
 
+  static guid() {
+    return ((new Date()).getTime() + Math.random()).toString();
+  }
+
   constructor(props) {
     super(props);
 
@@ -27,33 +31,65 @@ export default class WebViewRoot extends PureComponent {
     this.hide = this.hide.bind(this);
     this.close = this.close.bind(this);
     this.onWebViewClose = this.onWebViewClose.bind(this);
+    this.onWebViewToggleVisibleStart = this.onWebViewToggleVisibleStart.bind(this);
+    this.onWebViewToggleVisibleEnd = this.onWebViewToggleVisibleEnd.bind(this);
   }
 
-  static guid() {
-    return ((new Date()).getTime() + Math.random()).toString();
-  }
+  /**
+   * Main webview item.
+   * @var {Object}
+   */
+  wvItem = null;
 
-  componentDidMount() {}
+  componentDidMount() {
+    // Init main webview item
+    this.wvItem = this.open(null, {
+      props: { visible: false }
+    });
+  }
 
   onWebViewClose(webview) {
-    if (webview instanceof WebViewComponent) {
-      let { webviews } = this.state;
-      let index = (webviews || []).findIndex(item => (item.webview === webview));
-      if (index >= 0) {
-        // Reset data
-        let wvItem = webviews[index] || {};
-        for (let prop in wvItem) {
-          wvItem[prop] = null;
-        }
-        webviews.splice(index, 1);
-        webviews = webviews.concat([]); // <-- trigger state changes
-        this.setState(() => ({ webviews }));
+    let { webviews } = this.state;
+    let index = (webviews || []).findIndex(item => (item.webview === webview));
+    if (index >= 0) {
+      // Case: main webview --> hide only!
+      if (index === 0) { return; }
+      // Reset data
+      let wvItem = webviews[index] || {};
+      for (let prop in wvItem) {
+        wvItem[prop] = null;
       }
+      webviews.splice(index, 1);
+      webviews = webviews.concat([]); // <-- trigger state changes
+      this.setState({ webviews });
     }
   }
 
-  open(props = {}, opts = {}) {
+  webviewToggleVisible(webview, visible) {
     let { webviews } = this.state;
+    let wvItem = (webviews || []).find(item => (item.webview === webview));
+    if (wvItem) {
+      // trigger state changes
+      webviews = webviews.concat([]);
+      this.setState({ webviews });
+    }
+  }
+
+  onWebViewToggleVisibleStart(webview, visible) {
+    if (visible) {
+      return this.webviewToggleVisible(webview, visible);
+    }
+  }
+
+  onWebViewToggleVisibleEnd(webview, visible) {
+    if (!visible) {
+      return this.webviewToggleVisible(webview, visible);
+    }
+  }
+
+  open(source = null, opts = {}) {
+    let { webviews } = this.state;
+    let props = (opts.props || {});
     // Format input
     // ...
 
@@ -62,14 +98,17 @@ export default class WebViewRoot extends PureComponent {
     let component = (
       <WebViewComponent
         {...props}
-        key={key}
+        key={`wv-${key}`}
         ref={ref => {
           wvItem.webview = ref;
           if (props.ref) {
-            props.ref(ref);
+            return props.ref(ref);
           }
         }}
-        onClose={this.onWebViewClose}
+        // onClose={this.onWebViewClose}
+        onToggleVisibleStart={this.onWebViewToggleVisibleStart}
+        onToggleVisibleEnd={this.onWebViewToggleVisibleEnd}
+        source={source}
       />
     );
     let wvItem = { key, webview: null, component };
@@ -111,14 +150,32 @@ export default class WebViewRoot extends PureComponent {
     return webview.close(opts);
   }
 
+  get main() {
+    return this.wvItem.webview;
+  }
+
+  get isVisible() {
+    let visible = false;
+    let { webviews } = this.state;
+    for (let wvItem of webviews) {
+      if (wvItem.webview) {
+        if (wvItem.webview.isVisible) {
+          visible = true;
+          break;
+        }
+      }
+    }
+    return visible;
+  }
+
   render() {
     let { webviews } = this.state;
-    console.log('render WebViewRoot', webviews.length);
-    return (webviews.length
-      ? (<View style={[styles.root]}>
-      {webviews.map(({ component }) => (component))}
-      </View>)
-      : null
+    console.log('render WebViewRoot', webviews.length, this.isVisible);
+    return (webviews.length ? (
+        <View style={[styles.root, this.isVisible && styles.rootVisible]}>
+          {webviews.map(({ component }) => (component))}
+        </View>
+      ) : null
     );
   }
 }

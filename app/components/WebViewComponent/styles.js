@@ -4,7 +4,7 @@
 import EStyleSheet from 'react-native-extended-stylesheet';
 
 //
-const zIndexRoot = 999;
+const zIndexRoot = 9991;
 
 //
 const styles = EStyleSheet.create({
@@ -13,19 +13,25 @@ const styles = EStyleSheet.create({
         width: '100%',
         height: '100%',
         top: 0,
-        left: 0,
+        left: 0, // $g.dimensions.screen.width,
         zIndex: zIndexRoot,
+        borderWidth: 3, borderColor: 'green',
+    },
+    rootVisible: {
+        left: 0,
     },
     wv: {
         position: 'absolute',
         width: '100%',
         height: '100%',
+        // opacity: 0,
         top: 0,
         left: 0,
         zIndex: zIndexRoot + 1,
         // borderWidth: 1, borderColor: 'red',
-        opacity: 0,
-        transform: [{ translateY: $g.dimensions.screen.height }]
+    },
+    wvHidden: {
+        left: $g.dimensions.screen.width,
     },
     head: {
         height: 50,

@@ -37,6 +37,11 @@ export default class WebViewComponent extends PureComponent {
     this.state = {
       // 
       source: props.source,
+      //
+      // @var {Boolean} is show?
+      visible: (typeof props.visible === 'boolean') ? props.visible : true,
+      //
+      duration: 768,
       // show/hide head more menu
       showheadMenuMenu: false
     };
@@ -56,7 +61,38 @@ export default class WebViewComponent extends PureComponent {
     }
   }
 
-  open(source, opts = {}) {
+  toggleVisible(cb, visible, opts = {}) {
+    let {
+      onToggleVisibleStart,
+      onToggleVisibleEnd
+    } = this.props;
+    // Trigger event
+    if (onToggleVisibleStart) {
+      onToggleVisibleStart(this, visible);
+    }
+    // Animation
+    let duration = (opts.duration || this.state.duration);
+    if (visible) { // case: show
+      duration = parseInt(duration * 0.9);
+    } else { // case: hide
+      duration = parseInt(duration * 0.6);
+    }
+    this.refAniViewRoot.transitionTo({
+      left: visible ? 0 /* show */ : $g.dimensions.screen.width /* hide */
+    }, duration);
+    // 
+    setTimeout(() => {
+      // Toggle visible + trigger event
+      this.state.visible = visible;
+      if (onToggleVisibleEnd) {
+        onToggleVisibleEnd(this, visible);
+      }
+      // Fire callback?
+      if (cb) { cb(); }
+    }, duration + 64);
+  }
+
+  open(source = null, opts = {}) {
     this.show(() => {
       if (typeof source === 'object') {
         this.setState({ source });
@@ -65,25 +101,11 @@ export default class WebViewComponent extends PureComponent {
   }
 
   show(cb, opts = {}) {
-    let duration = (opts.duration || 512);
-    this.refAniViewRoot.transitionTo({
-      opacity: 1, transform: [{ translateY: 0 }]
-    }, duration);
-    // Fire callback?
-    if (cb) {
-      setTimeout(cb, duration + 64);
-    }
+    return this.toggleVisible(cb, true, opts);
   }
 
   hide(cb, opts = {}) {
-    let duration = (opts.duration || 512);
-    this.refAniViewRoot.transitionTo({
-      opacity: 0, transform: [{ translateY: $g.dimensions.screen.height }]
-    }, duration);
-    // Fire callback?
-    if (cb) {
-      setTimeout(cb, duration + 64);
-    }
+    return this.toggleVisible(cb, false, opts);
   }
 
   close(opts = {}) {
@@ -94,6 +116,10 @@ export default class WebViewComponent extends PureComponent {
         this.props.onClose(this);
       }
     }, opts);
+  }
+
+  get isVisible() {
+    return this.state.visible;
   }
 
   more(act = '') {
@@ -144,7 +170,8 @@ export default class WebViewComponent extends PureComponent {
     // console.log('onNavigationStateChange: ', event);
     // Update head title text
     let { title } = event;
-    this.refHeadTitleComponent.updatetext(title);
+    title = (title === 'about:blank') ? '' : title;
+    this.refHeadTitle.updatetext(title);
   }
 
   _renderHead() {
@@ -158,7 +185,7 @@ export default class WebViewComponent extends PureComponent {
         </View>
         <View style={[styles.headTitle]}>
           <HeadTitleComponent
-            ref={ref => { this.refHeadTitleComponent = ref; }} 
+            ref={ref => { this.refHeadTitle = ref; }} 
             style={[styles.titleTxt]}
           />
         </View>
@@ -217,7 +244,7 @@ export default class WebViewComponent extends PureComponent {
   _renderWebView() {
     let { source } = this.state;
     return (
-      <View style={[styles.webview]}        >
+      <View style={[styles.webview]}>
         <WebViewExtended
           wvref={ref => { this.refWebView = ref; }}
           style={[styles.webviewWV]}
@@ -241,9 +268,10 @@ export default class WebViewComponent extends PureComponent {
   }
 
   render() {
+    let { visible } = this.state;
     return (
       <Ani.View
-        style={[styles.wv]}
+        style={[styles.wv, !visible && styles.wvHidden]}
         ref={ref => { this.refAniViewRoot = ref; }}
       >
         {this._renderHead()}
