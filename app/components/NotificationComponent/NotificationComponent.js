@@ -5,9 +5,7 @@ import React, { PureComponent } from "react";
 //
 import {
   View,
-  ScrollView,
   FlatList,
-  // Image,
   Text,
   TouchableOpacity
 } from 'react-native';
@@ -19,6 +17,8 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 //
 import * as constants from './constants';
+// 
+import NewsItemComponent from './NewsItemComponent';
 
 /**
  * @class NotificationComponent
@@ -31,9 +31,11 @@ export default class NotificationComponent extends PureComponent {
       show: !!props.show,
       duration: 512,
       // @see https://github.com/facebook/react-native/issues/12981
-      fetchNewsFeedInterval: 1000 * (60 * 1),
-      // news feed data
-      news: props.news || {}
+      fetchNewsFeedCnf: {
+        interval: (60 * 1),
+        stepCur: 0,
+        stepRun: 5
+      }
     };
     // Bind method(s)
     this.fetchNewsFeed = this.fetchNewsFeed.bind(this);
@@ -52,20 +54,39 @@ export default class NotificationComponent extends PureComponent {
   _fetchNewsFeedTimer = null;
 
   componentDidMount() {
-    let { fetchNewsFeedInterval } = this.state;
+    let { fetchNewsFeedCnf } = this.state;
 
     // Fetch news feed
     let fetchNewsFeed = async () => {
-      let { storeNewsData } = this.props;
-      let data = await this.fetchNewsFeed();
-      console.log('newsData: ', data.length);
-      storeNewsData(data);
+      let { stepCur, stepRun, interval } = fetchNewsFeedCnf;
+      if (stepCur === 0) {
+        let { storeNewsData } = this.props;
+        let data = await this.fetchNewsFeed();
+        storeNewsData(data);
+      }
       // Run interval!
-      this._fetchNewsFeedTimer = setTimeout(fetchNewsFeed, fetchNewsFeedInterval);
+      stepCur += 1;
+      Object.assign(fetchNewsFeedCnf, {
+        stepCur: (stepCur = (stepCur > stepRun) ? 0 : stepCur)
+      });
+      // console.log(`${stepCur}/${stepRun}`);
+      this._fetchNewsFeedTimer = setTimeout(fetchNewsFeed, 1000 * interval);
     };
     fetchNewsFeed();
     //.end
   }
+
+  /* static getDerivedStateFromProps(props, state) {
+    console.log('getDerivedStateFromProps');
+    return null;
+    // Typical usage (don't forget to compare props):
+    if (props.news !== state.news) {
+      return {
+        news: props.news
+      };
+    }
+    return null;
+  } */
 
   componentWillUnmount() {
     clearTimeout(this._fetchNewsFeedTimer);
@@ -105,14 +126,19 @@ export default class NotificationComponent extends PureComponent {
    * 
    */
   handleMarkAllRead(item = null) {
-    let { markNewsRead } = this.props;
-    let { news } = this.state;
+    let { news } = this.props;
     let { data } = (news || {});
     if (item) { // Case: mark 1 item
       data = [item];
     }
-    data = data.map(({ id }) => ({ id, read: true }));
-    markNewsRead(data);
+    data = data
+      .filter(item => (item.id && !(item.read === true)))
+      .map(({ id }) => ({ id, read: true }))
+    ;
+    if (data.length) {
+      let { markNewsRead } = this.props;
+      markNewsRead(data);
+    }
   }
 
   /**
@@ -121,24 +147,33 @@ export default class NotificationComponent extends PureComponent {
    */
   handleViewNewsDetails(news, index) {
     // open + view link on webview
-    $g.utils.WebView.open({ uri: news.link[0] });
-    // mark as read
-    // this.handleMarkAllRead(news);
+    $g.utils.WebView.main.open({ uri: news.link[0] });
+    // mark as read?
+    setTimeout(this.handleMarkAllRead.bind(this, news), 1000);
   }
 
   /**
    * Render news (notification) list
    */
   _renderList() {
-    let { news } = this.state;
+    let { news } = this.props;
     return (
       <FlatList
         style={[styles.newsList]}
         data={(news.data || [])}
+        extraData={this.state}
         keyExtractor={(item, index) => `news-${item.id}`}
-        renderItem={({ item, index }) => {
+        renderItem={(data) => {
+          return (
+            <NewsItemComponent
+              key={`news-${data.item.id}`}
+              data={data}
+              handleViewNewsDetails={this.handleViewNewsDetails}
+            />
+          );
           return (
             <TouchableOpacity
+              key={`news-${item.id}`}
               onPress={() => this.handleViewNewsDetails(item, index)}
             >
               <View style={[styles.news, (item.read && styles.newsRead)]}>
@@ -161,11 +196,12 @@ export default class NotificationComponent extends PureComponent {
   }
 
   _renderPage() {
-    let { duration, news } = this.state;
+    let { duration} = this.state;
+    let { news } = this.props;
     return (
       <Ani.View
         key='page'
-        ref={ref => { this._refPageView = ref; }}
+        ref={ref => { this.refPageView = ref; }}
         style={[styles.page]}
       >
         <View style={[styles.pageBg]} />
@@ -175,11 +211,12 @@ export default class NotificationComponent extends PureComponent {
             {/*Topbars*/}
             <View style={[styles.pageTopbars]}>
               <TouchableOpacity
-                onPress={() => this._refPageView.transitionTo({
+                style={[styles.pageIcon]}
+                onPress={() => this.refPageView.transitionTo({
                   opacity: 0, transform: [{ translateY: -$g.dimensions.screen.height }]
                 }, duration)}
               >
-                <Ionicon name='md-close' style={[styles.pageIconClose]} />
+                <View><Ionicon name='md-close' style={[styles.pageIconClose]} /></View>
               </TouchableOpacity>
             </View>
             {/*.end#Topbars*/}
@@ -224,33 +261,34 @@ export default class NotificationComponent extends PureComponent {
   }
 
   _renderFloatingIcon() {
-    let {
-      duration,
-      news
-    } = this.state;
+    let { duration } = this.state;
+    let { news } = this.props;
     let { count, readCount } = (news || {});
     let readCnt = ((count || 0) - (readCount || 0));
     // Render
     return (
-      <View key='fIcon' style={[styles.fIcon]}>
+      <TouchableOpacity
+        key='fIcon'
+        style={[styles.fIcon]}
+        onPress={evt => this.refPageView.transitionTo({
+          opacity: 1, transform: [{ translateY: 0 }]
+        }, duration)}
+      >
         <View style={[styles.fIconIonicon]}>
-          <TouchableOpacity
-            style={[{ margin: 0, padding: 0, backgroundColor: 'transparent' }]}
-            onPress={evt => this._refPageView.transitionTo({
-              opacity: 1, transform: [{ translateY: 0 }]
-            }, duration)}
-          >
-            <Ionicon name='ios-notifications-outline' size={20} style={[styles.fIconImg]} />
-          </TouchableOpacity>
+          <Ionicon name='ios-notifications-outline' size={20} style={[styles.fIconImg]} />
         </View>
-        <View style={[styles.fIconBadge]}>
-          {readCnt ? (<Text style={[styles.fIconBadgeTxt]}>{readCnt}</Text>) : null}
-        </View>
-      </View>
+        {readCnt
+          ? (<View style={[styles.fIconBadge]}>
+            <Text style={[styles.fIconBadgeTxt]}>{readCnt}</Text>
+          </View>)
+          : null
+        }
+      </TouchableOpacity>
     );
   }
 
   render() {
+    console.log('render NotificationComponent');
     return ([
       // Floating icon
       this._renderFloatingIcon(),

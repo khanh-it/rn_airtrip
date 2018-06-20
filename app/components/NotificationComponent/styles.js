@@ -4,11 +4,14 @@
 import EStyleSheet from 'react-native-extended-stylesheet';
 
 //
+const zIndexRoot = 2990;
+
+//
 const styles = EStyleSheet.create({
     // Page
     page: {
         flex: 1,
-        zIndex: 9999,
+        zIndex: zIndexRoot,
         // borderWidth: 1, borderColor: 'blue',
         // opacity: 0,
         // transform: [{ translateY: -$g.dimensions.screen.height }]
@@ -25,24 +28,31 @@ const styles = EStyleSheet.create({
     },
     pageRoot: {
         flex: 1,
-        zIndex: 10
+        zIndex: 2
     },
     pageHead: {
-        padding: 10
+        paddingTop: 3,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 10,
     },
     pageTopbars: {
-        paddingTop: 0,
-        paddingRight: 7,
-        justifyContent: 'flex-end',
         alignItems: 'flex-end',
+    },
+    pageIcon: {
+        paddingTop: 7,
+        paddingRight: 10,
+        paddingBottom: 7,
+        paddingLeft: 10,
+        // borderWidth: 1, borderColor: 'blue',
     },
     pageIconClose: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
     },
     pageTitle: {
-        paddingTop: 40,
+        paddingTop: 33,
     },
     pageTitleTxt: {
         height: 42,
@@ -80,11 +90,11 @@ const styles = EStyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        zIndex: 9998,
+        zIndex: zIndexRoot - 1,
         minWidth: 35,
         minHeight: 35,
         justifyContent: 'flex-end',
-        // borderWidth: 1, borderColor: 'red',
+        // borderWidth: 2, borderColor: 'red',
     },
     fIconIcon: {
         position: 'absolute',
@@ -136,9 +146,7 @@ const styles = EStyleSheet.create({
     newsItem: {
         padding: 20
     },
-    newsDate: {
-        
-    },
+    newsDate: {},
     newsMsg: {
         flex: 1,
     },

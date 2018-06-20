@@ -39,9 +39,10 @@ export default function news(state = dfData, action) {
                 items = (items instanceof Array) ? items : [items];
                 items.forEach(item => {
                     let foundItem = findItemById(state, (item || {}).id);
-                    if (foundItem) {
+                    /* if (foundItem) {
                         console.log(NEWS_ADD + ' item duplicated: ', foundItem.id);
-                    } else {
+                    } */
+                    if (!foundItem) {
                         data = data.concat([item]);
                         count += 1;
                         readCount += !!((item || {}).read);

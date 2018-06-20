@@ -41,7 +41,7 @@ export default class WebViewComponent extends PureComponent {
       // @var {Boolean} is show?
       visible: (typeof props.visible === 'boolean') ? props.visible : true,
       //
-      duration: 768,
+      duration: 512,
       // show/hide head more menu
       showheadMenuMenu: false
     };
@@ -55,9 +55,10 @@ export default class WebViewComponent extends PureComponent {
   }
 
   componentDidMount() {
-    // Auto load?
-    if (this.state.source) {
-      this.open(this.state.source);
+    // Show on first load?
+    let { initialVisible } = this.props;
+    if (!(initialVisible === false)) {
+      setTimeout(this.show, 128);
     }
   }
 
@@ -66,6 +67,8 @@ export default class WebViewComponent extends PureComponent {
       onToggleVisibleStart,
       onToggleVisibleEnd
     } = this.props;
+    // Toggle visible
+    this.state.visible = visible;
     // Trigger event
     if (onToggleVisibleStart) {
       onToggleVisibleStart(this, visible);
@@ -82,8 +85,7 @@ export default class WebViewComponent extends PureComponent {
     }, duration);
     // 
     setTimeout(() => {
-      // Toggle visible + trigger event
-      this.state.visible = visible;
+      // Trigger event
       if (onToggleVisibleEnd) {
         onToggleVisibleEnd(this, visible);
       }
@@ -92,7 +94,10 @@ export default class WebViewComponent extends PureComponent {
     }, duration + 64);
   }
 
-  open(source = null, opts = {}) {
+  open(source, opts = {}) {
+    if (source === undefined) {
+      source = this.state.source;
+    }
     this.show(() => {
       if (typeof source === 'object') {
         this.setState({ source });
@@ -268,10 +273,9 @@ export default class WebViewComponent extends PureComponent {
   }
 
   render() {
-    let { visible } = this.state;
     return (
       <Ani.View
-        style={[styles.wv, !visible && styles.wvHidden]}
+        style={[styles.wv]}
         ref={ref => { this.refAniViewRoot = ref; }}
       >
         {this._renderHead()}

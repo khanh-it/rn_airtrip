@@ -44,8 +44,9 @@ export default class WebViewRoot extends PureComponent {
   componentDidMount() {
     // Init main webview item
     this.wvItem = this.open(null, {
-      props: { visible: false }
+      props: { initialVisible: false }
     });
+    //.end
   }
 
   onWebViewClose(webview) {
@@ -76,13 +77,13 @@ export default class WebViewRoot extends PureComponent {
   }
 
   onWebViewToggleVisibleStart(webview, visible) {
-    if (visible) {
+    if (visible) { // show
       return this.webviewToggleVisible(webview, visible);
     }
   }
 
   onWebViewToggleVisibleEnd(webview, visible) {
-    if (!visible) {
+    if (!visible) { // hide
       return this.webviewToggleVisible(webview, visible);
     }
   }
@@ -105,7 +106,7 @@ export default class WebViewRoot extends PureComponent {
             return props.ref(ref);
           }
         }}
-        // onClose={this.onWebViewClose}
+        onClose={this.onWebViewClose}
         onToggleVisibleStart={this.onWebViewToggleVisibleStart}
         onToggleVisibleEnd={this.onWebViewToggleVisibleEnd}
         source={source}
@@ -170,7 +171,7 @@ export default class WebViewRoot extends PureComponent {
 
   render() {
     let { webviews } = this.state;
-    console.log('render WebViewRoot', webviews.length, this.isVisible);
+    // console.log('render WebViewRoot', webviews.length, this.isVisible);
     return (webviews.length ? (
         <View style={[styles.root, this.isVisible && styles.rootVisible]}>
           {webviews.map(({ component }) => (component))}
