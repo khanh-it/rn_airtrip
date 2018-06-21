@@ -24,7 +24,7 @@ export class HomeScreenComponent extends Component {
   render() {
     return ([
       // Home
-      // <HomeComponent key='home' />,
+      <HomeComponent key='home' />,
       //.end
       // Notification
       <NotificationComponent key='notify' />,

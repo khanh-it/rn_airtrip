@@ -18,14 +18,43 @@ import styles from './styles';
 import weblinks from './weblinks';
 
 /**
- * @class WeblinksComponent
+ * @class WebLinkComponent
  */
-export default class WeblinksComponent extends Component {
+export default class WebLinkComponent extends Component {
   constructor(props) {
     super(props);
 
     // Init state
-    this.state = {};
+    this.state = {
+      scrollTo: { x: 0, y: 0, animated: true }
+    };
+
+    // Bind method(s)
+    this.onScrollTo = this.onScrollTo.bind(this);
+    this.onOpenWebLink = this.onOpenWebLink.bind(this);
+  }
+
+  onScrollTo(dir) {
+    let { scrollTo } = this.state;
+    let { scrollSpeed } = this.props;
+    scrollSpeed = (scrollSpeed || 50);
+    if ('R' === dir) { // go right
+      scrollTo.x += scrollSpeed;
+    }
+    if ('L' === dir) { // go left
+      scrollTo.x -= scrollSpeed;
+    }    
+    this.refScrollView.scrollTo(this.state.scrollTo = scrollTo);
+    console.log(scrollTo);
+  }
+
+  /**
+   * 
+   * @param {*} item 
+   * @param {*} evt 
+   */
+  onOpenWebLink(item, evt) {
+
   }
 
   render() {
@@ -35,9 +64,7 @@ export default class WeblinksComponent extends Component {
         <View style={[styles.weblinksContent]}>
           <View style={[styles.wlArrow, styles.wlArrowL]}>
             <TouchableWithoutFeedback
-              onPress={() => {
-                alert('wlArrowL')
-              }}
+              onPress={(evt) => this.onScrollTo('L', evt)}
             >
               <Image
                 style={[styles.wlArrowImg, styles.wlArrowImgL]}
@@ -46,19 +73,24 @@ export default class WeblinksComponent extends Component {
             </TouchableWithoutFeedback>
           </View>
           <ScrollView
+            ref={ref => { this.refScrollView = ref; }}
             style={[styles.wlSlides]}
             contentContainerStyle={[styles.wlSlidesContent]}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
+            onLayout={evt => {
+              console.log('onLayout: ', evt.nativeEvent)
+            }}
+            onScroll={evt => {
+              console.log('onScroll: ', evt.nativeEvent)
+            }}
           >
           {weblinks.map((slide, idx) => {
             return (
               <TouchableWithoutFeedback
                 key={`slide-${idx}`}
-                onPress={() => {
-                  alert(slide.url);
-                }}
+                onPress={(evt) => this.onOpenWebLink(slide, evt)}
               >
                 <View style={[styles.wlSlide]}>
                   <Image style={[styles.wlSlideImg]} source={slide.img} resizeMode='contain' />
@@ -72,9 +104,7 @@ export default class WeblinksComponent extends Component {
           </ScrollView>
           <View style={[styles.wlArrow, styles.wlArrowR]}>
             <TouchableWithoutFeedback
-              onPress={() => {
-                alert('wlArrowR')
-              }}
+              onPress={(evt) => this.onScrollTo('R', evt)}
             >
               <Image
                 style={[styles.wlArrowImg, styles.wlArrowImgR]}

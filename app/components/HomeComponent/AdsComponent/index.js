@@ -5,10 +5,8 @@ import React, { Component } from "react";
 //
 import {
   View,
-  Text,
   WebView
 } from 'react-native';
-
 // Css
 import styles from './styles';
 
@@ -24,11 +22,10 @@ export default class AdsComponent extends Component {
   }
 
   render() {
-    let { history } = this.state;
     return (
       <View style={styles.root}>
         <WebView
-          source={{ uri: 'https://www-airtrip-renewal-dev.airtrip.jp/information.php' }}
+          source={{ uri: $g.configs.banner_url }}
           style={styles.webview}
         />
       </View>

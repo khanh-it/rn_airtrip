@@ -18,7 +18,7 @@ import styles from './styles';
 //
 import * as constants from './constants';
 // 
-import NewsItemComponent from './NewsItemComponent';
+// import NewsItemComponent from './NewsItemComponent';
 
 /**
  * @class NotificationComponent
@@ -162,22 +162,16 @@ export default class NotificationComponent extends PureComponent {
         style={[styles.newsList]}
         data={(news.data || [])}
         extraData={this.state}
-        keyExtractor={(item, index) => `news-${item.id}`}
-        renderItem={(data) => {
-          return (
-            <NewsItemComponent
-              key={`news-${data.item.id}`}
-              data={data}
-              handleViewNewsDetails={this.handleViewNewsDetails}
-            />
-          );
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => {
           return (
             <TouchableOpacity
-              key={`news-${item.id}`}
+              key={item.id}
               onPress={() => this.handleViewNewsDetails(item, index)}
             >
               <View style={[styles.news, (item.read && styles.newsRead)]}>
                 <View style={[styles.newsItem, styles.newsDate]}>
+                  <Text style={[styles.newsTxt]}>{index + 1}.[{item.id}]</Text>
                   <Text style={[styles.newsTxt]}>{item.pubDate[0]}</Text>
                   {!item.read && (<Text style={[styles.newsTxt, styles.newsTxtUnread]}>{$g.Lang('未読')}</Text>)}
                 </View>
@@ -191,6 +185,7 @@ export default class NotificationComponent extends PureComponent {
             </TouchableOpacity>
           );
         }}
+        removeClippedSubviews={true}
       />
     );
   }
@@ -288,7 +283,7 @@ export default class NotificationComponent extends PureComponent {
   }
 
   render() {
-    console.log('render NotificationComponent');
+    // console.log('render NotificationComponent');
     return ([
       // Floating icon
       this._renderFloatingIcon(),

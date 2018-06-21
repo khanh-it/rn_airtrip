@@ -16,7 +16,7 @@ import styles from './styles';
 // Component(s)
 import ImgBgSliderComponent from './ImgBgSliderComponent';
 import SearchHistoryComponent from './SearchHistoryComponent';
-import WeblinksComponent from './WeblinksComponent';
+import WebLinkComponent from './WebLinkComponent';
 import AdsComponent from './AdsComponent';
 import FooterNavComponent from './FooterNavComponent';
 
@@ -31,9 +31,33 @@ export default class HomeComponent extends Component {
     this.state = {
       auth: null
     };
+
+    // Bind method(s)
+    this.onMainNav = this.onMainNav.bind(this);
   }
 
   componentDidMount() {}
+
+  /**
+   * 
+   * @param {*} nav 
+   * @param {*} evt 
+   */
+  onMainNav(nav, evt) {
+    switch (nav.toLowerCase()) {
+      // 
+      case 'domestic': {
+
+      } break;
+      //
+      case 'overseas': {
+        // Open webview
+        $g.utils.WebView.main.open({
+          uri: $g.configs.URL.overseas_secure
+        });
+      } break;
+    }
+  }
 
   /**
    * Page's header
@@ -59,9 +83,7 @@ export default class HomeComponent extends Component {
         <View style={[styles.mainNav]}>
           <View style={[styles.mainNavL]}>
             <TouchableWithoutFeedback
-              onPress={evt => {
-                alert('domestic')
-              }}
+              onPress={(evt) => this.onMainNav('domestic', evt)}
             >
               <View style={[styles.mnavItem, styles.mnavDomestic]}>
                 <View style={[styles.mnavItemBg]} />
@@ -76,9 +98,7 @@ export default class HomeComponent extends Component {
           </View>
           <View style={[styles.mainNavR]}>
             <TouchableWithoutFeedback
-              onPress={evt => {
-                alert('overseas')
-              }}
+              onPress={(evt) => this.onMainNav('overseas', evt)}
             >
               <View style={[styles.mnavItem, styles.mnavOverseas]}>
                 <View style={[styles.mnavItemBg]} />
@@ -108,11 +128,11 @@ export default class HomeComponent extends Component {
             showsVerticalScrollIndicator={false}
           >
             {this._renderPageHeader()}
-            <WeblinksComponent key='weblinks' />
+            <WebLinkComponent key='weblinks' />
             <SearchHistoryComponent key='search-history' />
           </ScrollView>
           <View key='footer' style={[styles.footer]}>
-            {/* <AdsComponent key='ads' /> */}
+            <AdsComponent key='ads' />
             <FooterNavComponent key='footer-navigation' />
           </View>
         </View>

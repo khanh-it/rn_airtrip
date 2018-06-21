@@ -130,9 +130,9 @@ export default class WebViewComponent extends PureComponent {
   more(act = '') {
     // show/hide more menu
     const toggleMenu = () => {
-      this.state.showheadMenuMenu = !this.state.showheadMenuMenu;
+      let showheadMenuMenu = (this.state.showheadMenuMenu = !this.state.showheadMenuMenu);
       this.refAniViewheadMenu.transitionTo({
-        opacity: this.state.showheadMenuMenu ? 1 : 0
+        right: showheadMenuMenu ? 2 : -$g.dimensions.screen.width
       });
     };
 

@@ -1,31 +1,28 @@
 /**
  * 
  */
-import EStyleSheet from 'react-native-extended-stylesheet';
-
+import ESS from 'react-native-extended-stylesheet';
 //
 const zIndexRoot = 2990;
+//
+
 
 //
-const styles = EStyleSheet.create({
+const styles = ESS.create({
     // Page
-    page: {
-        flex: 1,
+    page: () => Object.assign({}, ESS.value('$floating'), {
         zIndex: zIndexRoot,
-        // borderWidth: 1, borderColor: 'blue',
-        // opacity: 0,
-        // transform: [{ translateY: -$g.dimensions.screen.height }]
-    },
-    pageBg: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        zIndex: 1,
+        width: '100%',
+        height: '100%',
+        // borderWidth: 3, borderColor: 'blue',
+        /* ani */ opacity: 0, transform: [{ translateY: -$g.dimensions.screen.height }]
+    }),
+    pageBg: () => Object.assign({}, ESS.value('$floating'), {
         width: '100%',
         height: '100%',
         backgroundColor: 'black',
         opacity: 0.9
-    },
+    }),
     pageRoot: {
         flex: 1,
         zIndex: 2
@@ -86,36 +83,33 @@ const styles = EStyleSheet.create({
     //.end
     
     // Float icon
-    fIcon: {
-        position: 'absolute',
-        top: 0,
+    fIcon: () => Object.assign({}, ESS.value('$floating'), {
+        left: undefined,
         right: 0,
         zIndex: zIndexRoot - 1,
-        minWidth: 35,
-        minHeight: 35,
+        width: 35,
+        height: 35,
         justifyContent: 'flex-end',
-        // borderWidth: 2, borderColor: 'red',
-    },
+    }),
     fIconIcon: {
         position: 'absolute',
         bottom: 0,
         left: 0,
     },
     fIconImg: {
-        // width: 20,
-        // height: 20,
         color: 'white',
         fontWeight: '900',
         fontSize: 24
     },
     fIconBadge: {
+        $size: 20,
         position: 'absolute',
         top: 5,
         right: 5,
         backgroundColor: 'red',
-        minWidth: 20,
-        minHeight: 20,
-        borderRadius: 10,
+        minWidth: '$size',
+        minHeight: '$size',
+        borderRadius: '0.5 * $size',
         justifyContent: 'center'
     },
     fIconBadgeTxt: {
@@ -131,10 +125,10 @@ const styles = EStyleSheet.create({
         borderTopColor: 'white',
     },
     news: {
-        borderBottomWidth: 1,
-        borderBottomColor: 'white',
         flex: 1,
         flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: 'white',
         paddingTop: 10,
         paddingBottom: 15,
     },

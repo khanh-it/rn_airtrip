@@ -47,10 +47,10 @@ const styles = EStyleSheet.create({
     },
     headBtn: {
         fontSize: 28,
-        minWidth: 30,
+        width: 30,
         textAlign: 'center',
-        borderWidth: 1, borderColor: 'silver',
-        backgroundColor: 'white',
+        // borderWidth: 1, borderColor: 'silver',
+        // backgroundColor: 'white',
     },
     headTitle: {
         flex: 1,
@@ -64,13 +64,12 @@ const styles = EStyleSheet.create({
     headMenu: {
         position: 'absolute',
         top: 42,
-        right: 2,
-        zIndex: 9999 + 1,
+        right: -$g.dimensions.screen.width,
+        zIndex: zIndexRoot + 1,
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: 'silver',
         padding: 10,
-        opacity: 0
     },
     headMenuItem: {
         flexDirection: 'row',

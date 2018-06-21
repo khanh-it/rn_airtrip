@@ -4,8 +4,13 @@
 const configs = {
   is_debug: true,
   URL: {
-    // home screen's notifications feed
+    // home screen's
+    // +++ notifications feed
     news: 'https://www.evolableasia.com/airline_news/rss/',
+    // 
+    banner_url: 'https://www-airtrip-renewal-dev.airtrip.jp/information.php',
+    //
+    overseas_secure: 'https://secure-overseas-dev.airtrip.jp/',
     //.end
     api_end_point: 'https://apidev.evolableasia.net',
     api_end_point_overseas: 'http://overseasairtrip-api.tabi-air.com',
@@ -32,11 +37,9 @@ const configs = {
     domain: '.airtrip.jp',
     contact_url: 'https://www-airtrip-renewal-dev.airtrip.jp/contact?source=www-airtrip-renewal-dev.airtrip.jp',
     back_link_seach_url: 'https://www-airtrip-renewal-dev.airtrip.jp',
-    banner_url: 'https://www-airtrip-renewal-dev.airtrip.jp/information.php',
     back_link_mypage_url: 'https://www-airtrip-renewal-dev.airtrip.jp/mem',
     captcha_url: 'http://japanflight.tabi-air.com',
     withdrawal_url: 'https://www-airtrip-renewal-dev.airtrip.jp/mem/quit?source=airtrip.jp&source=airtrip.jp'
   }
 };
 module.exports = configs;
-
