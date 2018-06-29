@@ -1,7 +1,7 @@
 //
 import React, { PureComponent } from 'react';
 //
-import { View } from 'react-native';
+import { View, BackHandler } from 'react-native';
 
 // Css
 import styles from './styles';
@@ -42,11 +42,28 @@ export default class WebViewRoot extends PureComponent {
   wvItem = null;
 
   componentDidMount() {
+    // Handle [back] button
+    this.onBackPress.handler = BackHandler.addEventListener(
+      'hardwareBackPress', this.onBackPress.bind(this)
+    );
     // Init main webview item
     this.wvItem = this.open(null, {
       props: { initialVisible: false }
     });
     //.end
+  }
+
+  componentWillUnmount() {
+    // Handle [back] button
+    this.onBackPress.handler.remove();
+  }
+
+  onBackPress(event) {
+    if (this.wvItemVisible) {
+      this.close(this.wvItemVisible, { backPress: true });
+      return true;
+    }
+    return false;
   }
 
   onWebViewClose(webview) {
@@ -155,25 +172,22 @@ export default class WebViewRoot extends PureComponent {
     return this.wvItem.webview;
   }
 
-  get isVisible() {
-    let visible = false;
+  get wvItemVisible() {
+    let wvItem = null;
     let { webviews } = this.state;
-    for (let wvItem of webviews) {
-      if (wvItem.webview) {
-        if (wvItem.webview.isVisible) {
-          visible = true;
-          break;
-        }
+    for (let i = webviews.length - 1; i >= 0; i--) {
+      if (webviews[i].webview && webviews[i].webview.isVisible) {
+        wvItem = webviews[i];
+        break;
       }
     }
-    return visible;
+    return wvItem;
   }
 
   render() {
     let { webviews } = this.state;
-    // console.log('render WebViewRoot', webviews.length, this.isVisible);
     return (webviews.length ? (
-        <View style={[styles.root, this.isVisible && styles.rootVisible]}>
+        <View style={[styles.root, !!this.wvItemVisible && styles.rootVisible]}>
           {webviews.map(({ component }) => (component))}
         </View>
       ) : null

@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import { WebView } from 'react-native';
-import injectedJS from './WebViewBridge';
+import {
+  injectWebViewOnSroll,
+  injectWebViewOnWillNavigate
+} from './WebViewBridge';
 
 /**
  * @class WebViewExtended
@@ -18,15 +21,25 @@ export default class WebViewExtended extends PureComponent {
   }
 
   onMessage(event) {
-    let { onMessage, onScroll } = this.props;
+    let {
+      onScroll,
+      onWillNavigate,
+      onMessage
+    } = this.props;
     // Inject js...
     let msgObj = null;
     try {
       msgObj = JSON.parse(event.nativeEvent.data);
-      if (msgObj && ('__WebViewOnScroll' === msgObj.type)) {
+      // Fire callback!
+      // +++ 
+      if (onScroll && (msgObj && ('__WebViewOnScroll' === msgObj.type))) {
         let { scroll } = msgObj;
-        // Fire callback!
         return onScroll({ scroll });
+      }
+      // +++ 
+      if (onWillNavigate && (msgObj && ('__WebViewWillNavigate' === msgObj.type))) {
+        let { uri } = msgObj;
+        return onWillNavigate({ uri });
       }
     } catch (err) {
       // ...
@@ -38,9 +51,19 @@ export default class WebViewExtended extends PureComponent {
   }
 
   onLoadEnd(event) {
-    let { onLoadEnd } = this.props;
+    let {
+      onScroll,
+      onWillNavigate,
+      willNavigateRules,
+      onLoadEnd
+    } = this.props;
     // Inject js...
-    this.refWebView.injectJavaScript(injectedJS());
+    if (onScroll) {
+      this.refWebView.injectJavaScript(injectWebViewOnSroll());
+    }
+    if (onWillNavigate) {
+      this.refWebView.injectJavaScript(injectWebViewOnWillNavigate(willNavigateRules));
+    }
     // Fire callback?
     if (onLoadEnd) {
       return onLoadEnd(event);
@@ -48,7 +71,7 @@ export default class WebViewExtended extends PureComponent {
   }
 
   render() {
-    let { onScroll, wvref, ...props } = this.props;
+    let { wvref, ...props } = this.props;
     //
     let ref = (ref) => {
       this.refWebView = ref;
@@ -57,12 +80,14 @@ export default class WebViewExtended extends PureComponent {
       }
     };
     //.end
-    //
-    if (onScroll) {
-      props.onMessage = this.onMessage.bind(this);
-      props.onLoadEnd = this.onLoadEnd.bind(this);
-    }
     //.end
-    return (<WebView {...props} ref={ref} />);
+    return (
+      <WebView
+        ref={ref}
+        onMessage={this.onMessage.bind(this)}
+        onLoadEnd={this.onLoadEnd.bind(this)}
+        {...props}
+      />
+    );
   }
 }

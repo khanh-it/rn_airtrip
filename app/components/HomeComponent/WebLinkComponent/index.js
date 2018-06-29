@@ -30,22 +30,39 @@ export default class WebLinkComponent extends Component {
     };
 
     // Bind method(s)
-    this.onScrollTo = this.onScrollTo.bind(this);
+    this.scrollTo = this.scrollTo.bind(this);
+    this.onScroll = this.onScroll.bind(this);
     this.onOpenWebLink = this.onOpenWebLink.bind(this);
   }
 
-  onScrollTo(dir) {
+  /** @var {boolean} */
+  scrollToFlags = false; // false (begin) | 0 (middle) | true (end)
+
+  scrollTo(dir) {
+    if (typeof this.scrollToFlags) {
+    }
     let { scrollTo } = this.state;
     let { scrollSpeed } = this.props;
-    scrollSpeed = (scrollSpeed || 50);
-    if ('R' === dir) { // go right
+    scrollSpeed = (scrollSpeed || 64);
+    if (('R' === dir) && (this.scrollToFlags !== true)) { // go right
       scrollTo.x += scrollSpeed;
     }
-    if ('L' === dir) { // go left
+    if (('L' === dir) && (this.scrollToFlags !== false)) { // go left
       scrollTo.x -= scrollSpeed;
-    }    
+    }
     this.refScrollView.scrollTo(this.state.scrollTo = scrollTo);
-    console.log(scrollTo);
+    // console.log("scrollTo: ", scrollTo);
+  }
+
+  onScroll(evt) {
+    let { contentOffset, contentSize, layoutMeasurement } = evt.nativeEvent;
+    this.scrollToFlags = (contentOffset.x + layoutMeasurement.width);
+    if (contentOffset.x === 0) {
+      this.scrollToFlags = false;
+    } else if (this.scrollToFlags >= contentSize.width) {
+      this.scrollToFlags = true;
+    }
+    // console.log('onScroll: ', this.scrollToFlags);
   }
 
   /**
@@ -54,7 +71,9 @@ export default class WebLinkComponent extends Component {
    * @param {*} evt 
    */
   onOpenWebLink(item, evt) {
-
+    // console.log('onOpenWebLink: ', item, evt);
+    // open weblink
+    $g.utils.WebView.main.open(item.source);
   }
 
   render() {
@@ -64,7 +83,7 @@ export default class WebLinkComponent extends Component {
         <View style={[styles.weblinksContent]}>
           <View style={[styles.wlArrow, styles.wlArrowL]}>
             <TouchableWithoutFeedback
-              onPress={(evt) => this.onScrollTo('L', evt)}
+              onPress={(evt) => this.scrollTo('L', evt)}
             >
               <Image
                 style={[styles.wlArrowImg, styles.wlArrowImgL]}
@@ -79,12 +98,8 @@ export default class WebLinkComponent extends Component {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            onLayout={evt => {
-              console.log('onLayout: ', evt.nativeEvent)
-            }}
-            onScroll={evt => {
-              console.log('onScroll: ', evt.nativeEvent)
-            }}
+            // onLayout={evt => { console.log('onLayout: ', evt.nativeEvent) }}
+            onScroll={this.onScroll}
           >
           {weblinks.map((slide, idx) => {
             return (
@@ -104,7 +119,7 @@ export default class WebLinkComponent extends Component {
           </ScrollView>
           <View style={[styles.wlArrow, styles.wlArrowR]}>
             <TouchableWithoutFeedback
-              onPress={(evt) => this.onScrollTo('R', evt)}
+              onPress={(evt) => this.scrollTo('R', evt)}
             >
               <Image
                 style={[styles.wlArrowImg, styles.wlArrowImgR]}

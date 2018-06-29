@@ -31,6 +31,13 @@ export default class ImgBgSliderComponent extends Component {
     };
   }
 
+  /** @var {number} */
+  imgBgSliderTimer = null;
+
+  componentWillUnmount() {
+    clearTimeout(this.imgBgSliderTimer);
+  }
+
   render() {
     let { imgIdx, aniDelay } = this.state;
     let imgSrc = imgBgArr[imgIdx];
@@ -44,7 +51,8 @@ export default class ImgBgSliderComponent extends Component {
         duration={2000}
         delay={0}
         onAnimationEnd={evt => {
-          setTimeout(() => {
+          clearTimeout(this.imgBgSliderTimer);
+          this.imgBgSliderTimer = setTimeout(() => {
             this.setState(({ imgIdx }) => {
               ++imgIdx;
               if (!imgBgArr[imgIdx]) { imgIdx = 0; }

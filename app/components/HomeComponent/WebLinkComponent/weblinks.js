@@ -5,27 +5,37 @@ const weblinks = [
     /* train */ {
         img: require('../../../assets/img/icon_train.png'),
         txt: '新幹線',
-        url: 'https://www.google.com/',
+        source: {
+            uri: 'http://train-dev.airtrip.jp/'
+        },
     },
     /* car_rental */ {
         img: require('../../../assets/img/icon_car.png'),
         txt: '国内ツアー',
-        url: 'https://www.google.com/',
+        source: {
+            uri: 'https://rentacar-dev.airtrip.jp/top',
+        }
     },
     /* overseas_hotel */ {
         img: require('../../../assets/img/icon_oversea_hotel.png'),
         txt: 'ホテル',
-        url: 'https://www.google.com/',
+        source: {
+            uri: 'https://overseashotel-dev.airtrip.jp/',
+        }
     },
     /* japan_hotel */ {
         img: require('../../../assets/img/icon_japan_hotel.png'),
         txt: '高級旅館',
-        url: '',
+        source: {
+            uri: 'https://japanhotel-stgaws.airtrip.jp/',
+        }
     },
     /* activity */ {
         img: require('../../../assets/img/icon_activity.png'),
         txt: 'アクティビティ',
-        url: 'https://www.google.com/',
+        source: {
+            uri: 'https://activity-dev.airtrip.jp/',
+        }
     }
   ]
   export default weblinks;

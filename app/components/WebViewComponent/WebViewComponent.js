@@ -39,7 +39,7 @@ export default class WebViewComponent extends PureComponent {
       source: props.source,
       //
       // @var {Boolean} is show?
-      visible: (typeof props.visible === 'boolean') ? props.visible : true,
+      visible: (typeof props.visible === 'boolean') ? props.visible : false,
       //
       duration: 512,
       // show/hide head more menu

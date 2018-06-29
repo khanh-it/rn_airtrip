@@ -8,7 +8,7 @@ const configs = {
     // +++ notifications feed
     news: 'https://www.evolableasia.com/airline_news/rss/',
     // 
-    banner_url: 'https://www-airtrip-renewal-dev.airtrip.jp/information.php',
+    banner: 'https://www-airtrip-renewal-dev.airtrip.jp/information.php',
     //
     overseas_secure: 'https://secure-overseas-dev.airtrip.jp/',
     //.end

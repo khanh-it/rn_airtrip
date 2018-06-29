@@ -9,7 +9,7 @@ const styles = EStyleSheet.create({
         height: 50,
     },
     webview: {
-        flexGrow: 1
+        flex: 1,
     }
 });
 export default styles;

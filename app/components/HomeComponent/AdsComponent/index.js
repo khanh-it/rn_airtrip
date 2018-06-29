@@ -3,10 +3,11 @@
  */
 import React, { Component } from "react";
 //
+import { View } from 'react-native';
+//
 import {
-  View,
-  WebView
-} from 'react-native';
+  WebViewExtended
+} from 'react-native-my'
 // Css
 import styles from './styles';
 
@@ -21,12 +22,20 @@ export default class AdsComponent extends Component {
     this.state = {};
   }
 
+  onWillNavigate(source) {
+    // alert('onWillNavigate: ' + JSON.stringify(source));
+    $g.utils.WebView.main.open(source);
+  }
+
   render() {
     return (
-      <View style={styles.root}>
-        <WebView
-          source={{ uri: $g.configs.banner_url }}
-          style={styles.webview}
+      <View style={[styles.root]}>
+        <WebViewExtended
+          wvref={ref => { this.refWebView = ref; }}
+          style={[styles.webview]}
+          source={{ uri: $g.configs.URL.banner }}
+          onWillNavigate={this.onWillNavigate.bind(this)}
+          willNavigateRules={false}
         />
       </View>
     );
