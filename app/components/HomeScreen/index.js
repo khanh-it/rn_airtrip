@@ -9,7 +9,7 @@ import { createStackNavigator } from 'react-navigation';
 
 // Component(s)
 import HomeComponent from '../HomeComponent';
-import NotificationComponent from '../NotificationComponent';
+// import NotificationComponent from '../NotificationComponent';
 
 /**
  * @class HomeScreenComponent
@@ -27,7 +27,7 @@ export class HomeScreenComponent extends Component {
       <HomeComponent key='home' />,
       //.end
       // Notification
-      <NotificationComponent key='notify' />,
+      // <NotificationComponent key='notify' />,
       //.end
     ]);
   }

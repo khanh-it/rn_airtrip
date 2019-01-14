@@ -3,7 +3,7 @@ import { View } from 'react-native';
 // Global styles
 import styles from '../../assets/css/styles';
 // Component(s)
-import WebViewComponent from '../WebViewComponent';
+// import WebViewComponent from '../WebViewComponent';
 
 /**
  * @class RootComponent
@@ -15,10 +15,10 @@ export default class RootComponent extends PureComponent {
         <View style={[styles.html]}>
           <View style={[styles.document]}>
             {children}
-            <WebViewComponent ref={ref => {
+            {/* <WebViewComponent ref={ref => {
               // Public webview util.
               $g.utils.WebView = (this.refWebView = ref);
-            }} />
+            }} /> */}
           </View>
         </View>
       );

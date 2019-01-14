@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "rn_airtrip.app"
-               BlueprintName = "rn_airtrip"
-               ReferencedContainer = "container:rn_airtrip.xcodeproj">
+               BuildableName = "messaging.app"
+               BlueprintName = "messaging"
+               ReferencedContainer = "container:messaging.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "rn_airtripTests.xctest"
-               BlueprintName = "rn_airtripTests"
-               ReferencedContainer = "container:rn_airtrip.xcodeproj">
+               BuildableName = "messagingTests.xctest"
+               BlueprintName = "messagingTests"
+               ReferencedContainer = "container:messaging.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "rn_airtripTests.xctest"
-               BlueprintName = "rn_airtripTests"
-               ReferencedContainer = "container:rn_airtrip.xcodeproj">
+               BuildableName = "messagingTests.xctest"
+               BlueprintName = "messagingTests"
+               ReferencedContainer = "container:messaging.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "rn_airtrip.app"
-            BlueprintName = "rn_airtrip"
-            ReferencedContainer = "container:rn_airtrip.xcodeproj">
+            BuildableName = "messaging.app"
+            BlueprintName = "messaging"
+            ReferencedContainer = "container:messaging.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "rn_airtrip.app"
-            BlueprintName = "rn_airtrip"
-            ReferencedContainer = "container:rn_airtrip.xcodeproj">
+            BuildableName = "messaging.app"
+            BlueprintName = "messaging"
+            ReferencedContainer = "container:messaging.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "rn_airtrip.app"
-            BlueprintName = "rn_airtrip"
-            ReferencedContainer = "container:rn_airtrip.xcodeproj">
+            BuildableName = "messaging.app"
+            BlueprintName = "messaging"
+            ReferencedContainer = "container:messaging.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

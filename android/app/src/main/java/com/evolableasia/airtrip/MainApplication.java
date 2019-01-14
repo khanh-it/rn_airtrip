@@ -1,4 +1,4 @@
-package com.evolableasia.airtrip;
+package me.khanhdtp.messaging;
 
 import android.app.Application;
 

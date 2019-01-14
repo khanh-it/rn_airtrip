@@ -3,7 +3,7 @@ module.exports = {
   resolver: {
     extraNodeModules: {
       'react-native-my': require.resolve('./app/polyfills/react-native-my'),
-      crypto: require.resolve('./app/polyfills/crypto'),
+      // crypto: require.resolve('./app/polyfills/crypto'),
     },
   }
 };
