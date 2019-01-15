@@ -6,15 +6,18 @@ import React, { Component } from "react";
 import {
   ScrollView,
   View,
-  Text,
   Image,
   TouchableWithoutFeedback
 } from 'react-native';
+import {
+  Text
+} from 'react-native-my';
 // Css
 import styles from './styles';
 
 // Component(s)
-// import ImgBgSliderComponent from './ImgBgSliderComponent';
+import HeaderComponent from './HeaderComponent';
+import BodyComponent from './BodyComponent';
 
 /**
  * @class HomeComponent
@@ -56,28 +59,15 @@ export default class HomeComponent extends Component {
   }
 
   render() {
+    //
     let { bgSrc } = this.state;
+
+    //
     return (
-      <View style={[styles.body]}>
-        <Text>Messaging</Text>
+      <View style={[styles.body]} >
+        <HeaderComponent key="header" />
+        <BodyComponent />
       </View>
-      /* <View style={[styles.body]}>
-        <ImgBgSliderComponent key='bg' />
-        <View key='root' style={[styles.root]}>
-          <ScrollView
-            style={[styles.page]}
-            showsVerticalScrollIndicator={false}
-          >
-            {this._renderPageHeader()}
-            <WebLinkComponent key='weblinks' />
-            <SearchHistoryComponent key='search-history' />
-          </ScrollView>
-          <View key='footer' style={[styles.footer]}>
-            <AdsComponent key='ads' />
-            <FooterNavComponent key='footer-navigation' />
-          </View>
-        </View>
-      </View> */
     );
   }
 }

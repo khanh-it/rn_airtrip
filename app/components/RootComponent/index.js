@@ -13,13 +13,11 @@ export default class RootComponent extends PureComponent {
       let { children } = this.props;
       return (
         <View style={[styles.html]}>
-          <View style={[styles.document]}>
-            {children}
-            {/* <WebViewComponent ref={ref => {
-              // Public webview util.
-              $g.utils.WebView = (this.refWebView = ref);
-            }} /> */}
-          </View>
+          {children}
+          {/* <WebViewComponent ref={ref => {
+            // Public webview util.
+            $g.utils.WebView = (this.refWebView = ref);
+          }} /> */}
         </View>
       );
     }
