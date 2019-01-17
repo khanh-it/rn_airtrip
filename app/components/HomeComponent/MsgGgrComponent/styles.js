@@ -11,6 +11,7 @@ const dfStyles = {
     //
     root: {
         backgroundColor: 'white',
+        paddingLeft: 20,
         marginBottom: 15,
         borderTopWidth: 1,
         borderTopColor: '#e3e3e3',
@@ -19,9 +20,12 @@ const dfStyles = {
     },
     //
     title: {
+        paddingTop: 10,
+        paddingBottom: 10,
         color: '#8c8c8c',
-        borderBottomWidth: 1,
-        borderBottomColor: '#8c8c8c'
+    },
+    content: {
+        paddingRight: 20,
     }
 };
 const css = {

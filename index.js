@@ -4,6 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import prjGlob from './app/global';
 // Load App root component
 import App from './App';
+// import App from './App.PixelRatio';
 
 // Hide SplashScreen
 SplashScreen.hide();

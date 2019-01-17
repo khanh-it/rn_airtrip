@@ -81,7 +81,7 @@ export default class HeaderComponent extends Component
     } = this.state;
 
     return (
-      <View style={[ESS.value('$p10'), styles.header]}>
+      <View style={[ESS.value('$p20'), styles.header]}>
         <Text style={[ESS.value('$textCenter'), styles.headerTitle]}>
           {titleText}
         </Text>
@@ -92,9 +92,9 @@ export default class HeaderComponent extends Component
   _renderInputSearch()
   {
     return (
-      <View style={[ESS.value('$p20'), styles.search]}>
+      <View style={[ESS.value('$p10'), styles.search]}>
         {/* Search box */}
-        <View style={[ESS.value('$p20'), styles.searchBox]}>
+        <View style={[styles.searchBox]}>
           <View style={[styles.searchIcons, styles.searchIconsLeft]}>
             <VectorIcon
               Icon={Ionicon}
@@ -109,7 +109,7 @@ export default class HeaderComponent extends Component
               style={[styles.searchIcon, styles.searchIconBack]}
             />}
           </View>
-          <View style={[ESS.value('$p0'), styles.searchInput]}>
+          <View style={[styles.searchInput]}>
             <TextInput
               style={[styles.searchInputText]}
               //

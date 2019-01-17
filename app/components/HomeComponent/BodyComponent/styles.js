@@ -14,12 +14,13 @@ const dfStyles = {
     },
     //
     sync: {
+        backgroundColor: 'white',
         borderBottomWidth: 1,
         borderBottomColor: '#d8d8d8'
     },
     syncText: {
         color: '#33aaff',
-        fontSize: '1.125rem'
+        fontSize: '0.85rem'
     },
     // message list
     msgList: {

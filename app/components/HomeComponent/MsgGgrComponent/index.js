@@ -28,13 +28,15 @@ export default class MsgGgrComponent extends Component
 
   render() {
     return (
-      <View style={[ESS.value('$p25'), styles.root]}>
+      <View style={[styles.root]}>
         {this.state.title ? (
           <View style={[styles.title]}>
             <Text>{this.state.title}</Text>
           </View>
         ) : null}
-        {this.props.children}
+        <View style={[styles.content]}>
+          {this.props.children}
+        </View>
       </View>
     );
   }

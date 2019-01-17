@@ -72,7 +72,7 @@ export default class BodyComponent extends Component
 
           <MsgGgrComponent title="YESTERDAY">
             <MsgComponent
-              title={'Favorites'}
+              title={'Mom_Home'}
               date={new Date()}
               content={'YESTERDAY 001'}
             />
@@ -80,9 +80,24 @@ export default class BodyComponent extends Component
 
           <MsgGgrComponent title="EARLIER">
             <MsgComponent
-              title={'Favorites'}
+              title={'SCB'}
               date={new Date()}
               content={'EARLIER 001'}
+            />
+            <MsgComponent
+              title={'Vk iu cute'}
+              date={new Date()}
+              content={'EARLIER 002'}
+            />
+            <MsgComponent
+              title={'Dong A Bank'}
+              date={new Date()}
+              content={'EARLIER 003'}
+            />
+            <MsgComponent
+              title={'PA VietNam'}
+              date={new Date()}
+              content={'EARLIER 004'}
             />
           </MsgGgrComponent>
         </ScrollView>

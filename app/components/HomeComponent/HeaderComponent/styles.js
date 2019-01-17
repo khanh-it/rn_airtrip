@@ -13,10 +13,13 @@ const dfStyles = {
 
     },
     //
-    header: {},
+    header: {
+        paddingTop: 20,
+        paddingBottom: 5
+    },
     headerTitle: {
         color: ESS.value('$textColor'),
-        fontSize: '1.5rem',
+        fontSize: '1rem',
         fontWeight: 'bold'
     },
     // search
@@ -25,6 +28,10 @@ const dfStyles = {
         borderBottomColor: '#d8d8d8'
     },
     searchBox: {
+        paddingTop: 10,
+        paddingRight: 15,
+        paddingBottom: 10,
+        paddingLeft: 15,
         flexDirection: 'row',
         backgroundColor: '#efefef',
         borderRadius: 10
@@ -37,7 +44,7 @@ const dfStyles = {
     searchIconsRight: {
     },
     searchIcon: {
-        fontSize: '1.6rem'
+        fontSize: '1.2rem'
     },
     searchInput: {
         flex: 1,
@@ -45,9 +52,11 @@ const dfStyles = {
     },
     searchInputText: {
         width: '100%',
-        // height: '2rem',
-        fontSize: '1.25rem',
-        color: '#8f8f8f'
+        height: '1.4rem',
+        fontSize: '0.9rem',
+        color: '#8f8f8f',
+        paddingTop: 0,
+        paddingBottom: 0
     },
     searchInputTextPhColor: '#8f8f8f',
     //.end#search
