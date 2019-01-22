@@ -1,10 +1,10 @@
 /**
  * 
  */
-import EStyleSheet from 'react-native-extended-stylesheet';
+import ESS from 'react-native-extended-stylesheet';
 
 //
-const styles = EStyleSheet.create({
+const styles = ESS.create({
     weblinks: {
         marginTop: 20,
     },

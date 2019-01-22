@@ -1,13 +1,13 @@
 /**
  * 
  */
-import EStyleSheet from 'react-native-extended-stylesheet';
+import ESS from 'react-native-extended-stylesheet';
 
 //
 const zIndexRoot = 9990;
 
 //
-const styles = EStyleSheet.create({
+const styles = ESS.create({
     root: {
         position: 'absolute',
         width: '100%',

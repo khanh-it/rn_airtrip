@@ -1,24 +1,38 @@
+import SplashScreen from 'react-native-splash-screen';
 import React, { PureComponent } from 'react';
 import { View } from 'react-native';
+// Component(s)
+import WebViewComponent from '../WebViewComponent';
+import { HomeStackContainer } from '../routes';
+
 // Global styles
 import styles from '../../assets/css/styles';
-// Component(s)
-// import WebViewComponent from '../WebViewComponent';
 
 /**
  * @class RootComponent
  */
-export default class RootComponent extends PureComponent {
-    render() {
-      let { children } = this.props;
-      return (
-        <View style={[styles.html]}>
-          {children}
-          {/* <WebViewComponent ref={ref => {
-            // Public webview util.
-            $g.utils.WebView = (this.refWebView = ref);
-          }} /> */}
-        </View>
-      );
-    }
+export default class RootComponent extends PureComponent
+{
+  componentDidMount()
+  {
+    // Hide SplashScreen
+    SplashScreen.hide();
+  }
+
+  render()
+  {
+    return (
+      <View style={[styles.html]}>
+        <HomeStackContainer
+          ref={navigatorRef => {
+            $g.navServTop.setNavigator(navigatorRef);
+          }}
+        />
+        {/* Public webview util. */}
+        <WebViewComponent ref={ref => {
+          $g.utils.WebView = (this.refWebView = ref);
+        }} />
+      </View>
+    );
+  }
 }

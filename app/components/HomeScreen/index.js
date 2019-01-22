@@ -3,49 +3,72 @@
  */
 import React, { Component } from "react";
 //
-import SplashScreen from 'react-native-splash-screen';
-//
-import { createStackNavigator } from 'react-navigation';
+import {
+  ScrollView,
+  View,
+  Image,
+  Button,
+  TouchableWithoutFeedback
+} from 'react-native';
+import {
+  Text
+} from 'react-native-my';
+// Css
+import styles from './styles';
 
 // Component(s)
-import HomeComponent from '../HomeComponent';
-// import NotificationComponent from '../NotificationComponent';
-
-/**
- * @class HomeScreenComponent
- */
-export class HomeScreenComponent extends Component {
-
-  componentDidMount() {
-    // Hide SplashScreen
-    SplashScreen.hide();
-  }
-
-  render() {
-    return ([
-      // Home
-      <HomeComponent key='home' />,
-      //.end
-      // Notification
-      // <NotificationComponent key='notify' />,
-      //.end
-    ]);
-  }
-}
-
+import HeaderComponent from './HeaderComponent';
+import BodyComponent from './BodyComponent';
 
 /**
  * @class HomeScreen
  */
-const HomeScreen  = createStackNavigator(
-  {
-    '/':  {
-      screen: HomeScreenComponent
-    }
-  },
-  {
-    initialRouteName: '/',
-    headerMode : 'none'
+export default class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    // Initial state
+    this.state = {
+      auth: null
+    };
+
+    // Bind method(s)
+    this.onMainNav = this.onMainNav.bind(this);
   }
-);
-export default HomeScreen;
+
+  componentDidMount() {}
+
+  /**
+   * 
+   * @param {*} nav 
+   * @param {*} evt 
+   */
+  onMainNav(nav, evt) {
+    switch (nav.toLowerCase()) {
+      // 
+      case 'domestic': {
+
+      } break;
+      //
+      case 'overseas': {
+        // Open webview
+        $g.utils.WebView.main.open({
+          uri: $g.configs.URL.overseas_secure
+        });
+      } break;
+    }
+  }
+
+  render() {
+    //
+    let { bgSrc } = this.state;
+
+    //
+    return (
+      <View style={[styles.body]} >
+        <HeaderComponent key="header" />
+        <BodyComponent />
+      </View>
+    );
+  }
+}

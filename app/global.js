@@ -6,6 +6,7 @@ import ESS from 'react-native-extended-stylesheet';
 import xml2js from 'react-native-xml2js';
 //
 import Lang from './helpers/lang';
+import { NavigationService } from './helpers/react-navigation';
 //
 // export * from './helpers/native-base';
 
@@ -28,6 +29,8 @@ Object.assign(global, {
   configs,
   // @var {Object} translate helper
   Lang,
+  // @var {object} NavigationService
+  navServTop: new NavigationService(),
   // @var {Object}
   utils: {
     xml2js,

@@ -258,7 +258,7 @@ export default class WebViewComponent extends PureComponent {
           startInLoadingState={true}
           renderLoading={() => (
             <View style={[styles.loading]}>
-              <ActivityIndicator size="large" color={$g.EStyleSheet.value('$primaryBlue')} />
+              <ActivityIndicator size="large" color={$g.ESS.value('$primaryBlue')} />
             </View>
           )}
           // mixedContentMode={'compatibility'}

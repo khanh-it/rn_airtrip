@@ -7,25 +7,24 @@ import { store, persistor } from './app/configs/store';
 
 // Component(s)
 import RootComponent from './app/components/RootComponent';
-import HomeScreen from './app/components/HomeScreen';
 
 /**
  * @class App
  */
 export default class App extends Component
 {
-  constructor(props) {
+  constructor(props)
+  {
     super(props);
     this.state = {}
   }
 
-  render() {
+  render()
+  {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <RootComponent>
-            <HomeScreen />
-          </RootComponent>
+          <RootComponent />
         </PersistGate>
       </Provider>
     );

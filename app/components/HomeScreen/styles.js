@@ -1,11 +1,11 @@
 /**
  * 
  */
-import EStyleSheet from 'react-native-extended-stylesheet';
+import ESS from 'react-native-extended-stylesheet';
 
 //
-const styles = EStyleSheet.create({
-    body: EStyleSheet.value('$body'),
+const styles = ESS.create({
+    body: ESS.value('$body'),
     root: {
         flex: 1, 
         zIndex: 10,
