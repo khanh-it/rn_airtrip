@@ -10,6 +10,7 @@ const theme = ESS.value('$theme');
 const dfStyles = {
     //
     root: {
+        flex: 1,
         backgroundColor: '#f7f7f7',
     },
     //
@@ -19,13 +20,23 @@ const dfStyles = {
         borderBottomColor: '#d8d8d8'
     },
     syncText: {
+        // $outline: 1,
         color: '#33aaff',
         fontSize: '0.85rem'
     },
     // message list
     msgList: {
+        // $outline: 1,
+        borderColor: 'blue',
+        width: '100%',
+        height: '100%',
+        zIndex: 110
     },
     msgListBox: {
+        $outline: 1,
+        borderColor: 'red',
+        flex: 1,
+        backgroundColor: 'white',
         // flexDirection: 'row',
     },
     msgListIcons: {

@@ -6,6 +6,7 @@ import {
     USER_ADD,
     USER_DEL,
     USER_EDIT,
+    USER_SET,
     AUTH_SET
 } from './constants';
 
@@ -35,6 +36,15 @@ export function userDel(id) {
  */
 export function userEdit(id, user) {
     return { type: USER_EDIT, id, user };
+}
+
+/**
+ * Set users
+ * @param {Object} data 
+ * @return {Object}
+ */
+export function userSet(data) {
+    return { type: USER_SET, data };
 }
 
 /**

@@ -4,17 +4,21 @@
 import {
     USER_ADD,
     USER_DEL,
-    USER_EDIT
+    USER_EDIT,
+    USER_SET
 } from '../actions/constants';
+//
+// import { users as usersData } from './_generator';
 
 //
-let users = []; // default data
+let defaultData = []; // default data
+// defaultData = usersData.concat([]);
 
 /**
  * 
  */ 
-export default function users(state = users, action) {
-    state = (state instanceof Array) ? state : users; // set default value
+export default function users(state = defaultData, action) {
+    // state = (state instanceof Array) ? state : defaultData; // set default value
     switch (action.type) {
         // USER_ADD
         case USER_ADD:
@@ -30,6 +34,11 @@ export default function users(state = users, action) {
         // USER_EDIT
         case USER_EDIT:
             alert('USER_EDIT has not yet implemented');
+        break; // #end
+        // USER_SET
+        case USER_SET:
+            state = defaultData.concat([]);
+            // state = (action.data || {}).concat([]);
         break; // #end
         default:
     }

@@ -5,12 +5,12 @@ import { combineReducers } from 'redux';
 //
 import users from './users';
 import auth from './auth';
-import news from './news';
+import msgs from './msgs';
 
 // export default
 const reducers = combineReducers({
     users,
     auth,
-    news
+    msgs
 });
 export default reducers;

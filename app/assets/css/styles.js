@@ -28,6 +28,11 @@ const dfStyles = {
         left: 0,
         zIndex: 1,
     },
+    $hidden: {
+        height: 0,
+        width: 0,
+        opacity: 0,
+    },
     // +++
     $textColor: '#000000', // main app's text color...
     $primaryBlue: '#3498db',

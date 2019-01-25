@@ -9,12 +9,31 @@ const theme = ESS.value('$theme');
 // +++ theme default: 'light'
 const dfStyles = {
     //
-    root: {
+    rootSep: {
+        height: 6,
+        backgroundColor: '#f7f7f7',
+        borderBottomWidth: 1,
+        borderBottomColor: '#d8d8d8'
+    },
+    rootMsg: {
+        paddingLeft: 20,
         paddingTop: 20,
         paddingBottom: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#d8d8d8'
+    },
+    header: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#d8d8d8',
+        paddingBottom: 10,
+        marginBottom: 10,
+    },
+    headerText: {
+        
+    },
+    body: {
+        paddingRight: 20,
         flexDirection: 'row',
-        borderTopWidth: 1,
-        borderTopColor: '#d8d8d8'
     },
     col1: {
         flex: 1,
