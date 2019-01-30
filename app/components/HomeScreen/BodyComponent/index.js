@@ -9,7 +9,9 @@ import {
   View,
   FlatList,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight,
+  TouchableWithoutFeedback
 } from 'react-native';
 import {
   Text,
@@ -48,7 +50,13 @@ export default class BodyComponent extends PureComponent
     };
 
     // Bind method(s)
+    this._renderMsgItem = this._renderMsgItem.bind(this);
   }
+
+  /**
+   * @var  {Object}
+   */
+  _headers = {};
 
   componentDidMount()
   {
@@ -80,105 +88,144 @@ export default class BodyComponent extends PureComponent
     );
   }
 
+  _renderMsgItem({ item: contact, index })
+  {
+    if (false === contact) {
+      return (
+        <View
+          style={{ borderWidth: 2, borderColor: 'green', height: 55 }}
+          ref={ref => { this._refViewFLTop = ref; }}
+        />
+      );
+    }
+    let msg = ((contact && contact._msgs) || [])[0];
+    if (!msg) {
+      return;
+    }
+    let header = null;
+    if (!contact.favorite) {
+      if (msg.dateIsToday() && !this._headers.today) {
+        this._headers.today = header = $g.Lang('TODAY');
+      } else if (msg.dateIsYesterday() && !this._headers.yesterday) {
+        this._headers.yesterday = header = $g.Lang('YESTERDAY');
+      } else {
+        if (!this._headers.others) {
+          this._headers.others = header = $g.Lang('OTHER');
+        }
+      }
+    }
+    return (
+      <MsgComponent
+        header={header}
+        title={contact.fullname()}
+        date={msg.dateAsStr()}
+        content={msg.content}
+      />
+    );
+  }
+
   _renderMsgList()
   {
     let {
       contactsWithLatestMsgs: dataList
     } = this.state;
-    let headerYesterday = null;
-    let headerToday = null;
-    let headerOthers = null;
+    dataList = [false].concat(dataList);
+
+    // Reset
+    this._headers = {
+      yesterday: null,
+      today: null,
+      others: null,
+    };
+
     return (
-      <View style={[ESS.value('$floating'), styles.msgList]}>
-        {/* <Button title="Set data 'msg'" onPress={() => { this.props.setMsgs(); }} />
-        <Button title="Set data 'users'" onPress={() => { this.props.setUsers(); }} /> */}
+      <View
+        style={[ESS.value('$floating'), styles.msgList]}
+        ref={ref => { this._refViewMsgList = ref; }}
+        // ---
+        // onStartShouldSetResponderCapture={(evt) => true}
+        // onMoveShouldSetResponderCapture={(evt) => true}
+        // onStartShouldSetResponder={(evt) => true}
+        onMoveShouldSetResponder={(evt) => false}
+        // onResponderGrant={(evt) => { console.log('parent: onResponderGrant: '); }}
+        // onResponderReject={(evt) => {
+        //  console.log('parent: onResponderReject: ');
+        // }}
+        onResponderMove={(evt) => {
+          console.log('parent: onResponderMove: ');
+        }}
+        onResponderRelease={(evt) => {
+          console.log('parent: onResponderRelease: ');
+        }}
+        // onResponderTerminationRequest={(evt) => {
+        //   console.log('parent: onResponderTerminationRequest: ');
+        // }}
+        onResponderTerminate={(evt) => {
+          console.log('parent: onResponderTerminate: ');
+        }}
+        //.end
+      >
+        {/* <Button title="Set data 'msg'" onPress={() => { this.msgListModel.setMsgs(); }} />
+        <Button title="Set data 'users'" onPress={() => { this.msgListModel.setUsers(); }} /> */}
+        {/* Msg list box */}
+        
         <FlatList
           style={[styles.msgListBox]}
+          ref={ref => { this._refFlatList = ref; }}
           data={dataList}
           extraData={this.state}
-          keyExtractor={(contact) => contact.tel}
-          renderItem={({ item: contact, index }) => {
-            let msg = ((contact && contact._msgs) || [])[0];
-            if (!msg) {
-              return;
+          keyExtractor={(contact) => (contact.tel || Math.random().toString())}
+          renderItem={this._renderMsgItem}
+          // initialScrollIndex={1}
+          // ---
+          // onStartShouldSetResponderCapture={(evt) => true}
+          // onMoveShouldSetResponderCapture={(evt) => true}
+          onStartShouldSetResponder={(evt) => false}
+          onMoveShouldSetResponder={(evt) => true}
+          onResponderGrant={(evt) => { console.log('child: onResponderGrant: '); }}
+          onResponderReject={(evt) => { console.log('child: onResponderReject: '); }}
+          onResponderMove={(evt) => { console.log('child: onResponderMove: '); }}
+          onResponderRelease={(evt) => { console.log('child: onResponderRelease: '); }}
+          onResponderTerminationRequest={(evt) => { console.log('parent: onResponderTerminationRequest: '); }}
+          onResponderTerminate={(evt) => { console.log('child: onResponderTerminate: '); }}
+          //.end
+          // ListHeaderComponent={}
+          // ListEmptyComponent={}
+          // ListFooterComponent={}
+          // refreshing={false}
+          // onRefresh={(evt) => { console.log('onRefresh: ', evt); }}
+          snapToStart={false}
+          snapToEnd={false}
+          keyboardDismissMode={'on-drag'}
+          decelerationRate={'fast'}
+          onScrollBeginDrag={(evt) => { console.log('onScrollBeginDrag: '); }}
+          onScroll={(evt) => {
+            let { contentOffset } = evt.nativeEvent;
+            console.log('onScroll: ', contentOffset);
+            this._scrollContentOffset = this._scrollContentOffset || contentOffset;
+            if (this._scrollContentOffset.y > contentOffset.y) {
+              this._refViewFLTop.setNativeProps({
+                height: 55 + (this._scrollContentOffset.y - contentOffset.y)
+              });
             }
-            let header = null;
-            if (!contact.favorite) {
-              if (msg.dateIsToday() && !headerToday) {
-                headerToday = header = $g.Lang('TODAY');
-              } else if (msg.dateIsYesterday() && !headerYesterday) {
-                headerYesterday = header = $g.Lang('YESTERDAY');
-              } else {
-                if (!headerOthers) {
-                  headerOthers = header = $g.Lang('OTHER');
-                }
-              }
-            }
-            return (
-              <MsgComponent
-                header={header}
-                title={contact.fullname()}
-                date={msg.dateAsStr()}
-                content={msg.content}
-              />
-            );
+            this._scrollContentOffset = contentOffset;
           }}
+          onScrollEndDrag={(evt) => { console.log('onScrollEndDrag: '); }}
+          // onMomentumScrollBegin={(evt) => { console.log('onMomentumScrollBegin: ', evt); }}
+          // onMomentumScrollEnd={(evt) => { console.log('onMomentumScrollEnd: ', evt); }}
+          onLayout={(evt) => {
+            // let { x, y, width, height } = evt.nativeEvent;
+            console.log('onLayout: ', evt.nativeEvent);
+            this._refFlatList.scrollToIndex({
+              index: 1, animated: false
+            });
+            setTimeout(() => {
+              $g._refFlatList = this._refFlatList;
+            }, 256);
+          }}
+          //.end
           removeClippedSubviews={true}
         />
-        {/* Msg list box */}
-        {/* <View style={[styles.msgListBox]}>
-          <MsgComponent
-            title={'Favorites'}
-            date={new Date()}
-            content={'TK 1250###'}
-          />
-
-          <MsgComponent
-            header="TODAY"
-            title={'Mom_Home'}
-            date={new Date()}
-            content={'TODAY 001'}
-          />
-          <MsgComponent
-            title={'Mom_Home'}
-            date={new Date()}
-            content={'TODAY 002'}
-          />
-
-          <MsgComponent
-            header="YESTERDAY"
-            title={'Mom_Home'}
-            date={new Date()}
-            content={'YESTERDAY 001'}
-          />
-          <MsgComponent
-            title={'Mom_Home'}
-            date={new Date()}
-            content={'YESTERDAY 002'}
-          />
-
-          <MsgComponent
-            header="EARLIER"
-            title={'SCB'}
-            date={new Date()}
-            content={'EARLIER 001'}
-          />
-          <MsgComponent
-            title={'Vk iu cute'}
-            date={new Date()}
-            content={'EARLIER 002'}
-          />
-          <MsgComponent
-            title={'Dong A Bank'}
-            date={new Date()}
-            content={'EARLIER 003'}
-          />
-          <MsgComponent
-            title={'PA VietNam'}
-            date={new Date()}
-            content={'EARLIER 004'}
-          />
-        </View> */}
         {/* .end#Msg list box */}
       </View>
     );

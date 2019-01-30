@@ -65,7 +65,7 @@ export default class HomeScreen extends Component {
 
     //
     return (
-      <View style={[styles.body]} >
+      <View style={[styles.root]} >
         <HeaderComponent key="header" />
         <BodyComponent />
       </View>

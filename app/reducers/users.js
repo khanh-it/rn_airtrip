@@ -8,11 +8,11 @@ import {
     USER_SET
 } from '../actions/constants';
 //
-// import { users as usersData } from './_generator';
+import { users as usersData } from './_generator';
 
 //
 let defaultData = []; // default data
-// defaultData = usersData.concat([]);
+defaultData = usersData.concat([]);
 
 /**
  * 

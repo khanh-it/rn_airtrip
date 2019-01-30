@@ -16,6 +16,7 @@ const dfStyles = {
         borderBottomColor: '#d8d8d8'
     },
     rootMsg: {
+        backgroundColor: 'white',
         paddingLeft: 20,
         paddingTop: 20,
         paddingBottom: 15,

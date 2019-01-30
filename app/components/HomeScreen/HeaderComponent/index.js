@@ -3,11 +3,13 @@
  */
 import React, { Component } from "react";
 import ESS from 'react-native-extended-stylesheet';
+import * as Ani from 'react-native-animatable';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 //
 import {
   View,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback
 } from 'react-native';
 import {
@@ -30,14 +32,21 @@ export default class HeaderComponent extends Component
     this.state = {
       title: {},
       titleText: $g.Lang('Messaging'),
-
+      //
+      searchInputFocused: null,
       searching: false
     };
 
+    //
+    this.compLayouts = {
+
+    },
+    //.end
+
     // Bind method(s)
     this.handleSearchChangeText = this.handleSearchChangeText.bind(this);
-    this.handleSearchBlur = this.handleSearchBlur.bind(this);
-    this.handleSearchFocus = this.handleSearchFocus.bind(this);
+    this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
+    this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
   }
 
   onComponentDidMount()
@@ -60,18 +69,38 @@ export default class HeaderComponent extends Component
    * 
    * @param {Object} evt The event
    */
-  handleSearchBlur(evt)
+  handleSearchInputBlur(evt, opts = {})
   {
-
+    // this.refViewHead.fadeInDown();
+    let duration = 500;
+    this.refViewHead.transitionTo(
+      { height: this.compLayouts['vHeadTitle'].height },
+      duration,
+      'ease-in-out'
+    );
+    setTimeout(() => {
+      this.setState(() => ({ searchInputFocused: false }));
+    }, duration + 32);
+    //
   }
 
   /**
    * 
    * @param {Object} evt The event
    */
-  handleSearchFocus(evt)
+  handleSearchInputFocus(evt)
   {
-
+    // this.refViewHead.fadeOutUp();
+    let duration = 500;
+    this.refViewHead.transition(
+      { height: this.compLayouts['vHeadTitle'].height },
+      { height: 0 },
+      duration,
+      'ease-in-out'
+    );
+    setTimeout(() => {
+      this.setState(() => ({ searchInputFocused: true }))
+    }, duration + 32);
   }
 
   _renderHeadTitle()
@@ -81,33 +110,55 @@ export default class HeaderComponent extends Component
     } = this.state;
 
     return (
-      <View style={[ESS.value('$p20'), styles.header]}>
-        <Text style={[ESS.value('$textCenter'), styles.headerTitle]}>
-          {titleText}
-        </Text>
-      </View>
+      <Ani.View
+        style={[styles.header]}
+        ref={ref => { this.refViewHead = ref; }}
+      >
+        <View
+          style={[styles.headerTitle]}
+          ref={ref => { this.refViewHeadTitle = ref; }}
+          onLayout={(event) => {
+            if (!this.compLayouts['vHeadTitle']) {
+              this.compLayouts['vHeadTitle'] = event.nativeEvent.layout;
+              /* var { x, y, width, height } = event.nativeEvent.layout
+              this.refViewHeadTitle.setNativeProps({ height });
+              console.log('height: ', height); */
+            }
+          }}
+        >
+          <Text style={[ESS.value('$textCenter'), styles.headerTitleText]}>
+            {titleText}
+          </Text>
+        </View>
+      </Ani.View>
     );
   }
 
   _renderInputSearch()
   {
     return (
-      <View style={[ESS.value('$p10'), styles.search]}>
+      <Ani.View style={[ESS.value('$p10'), styles.search]}>
         {/* Search box */}
         <View style={[styles.searchBox]}>
           <View style={[styles.searchIcons, styles.searchIconsLeft]}>
-            <VectorIcon
-              Icon={Ionicon}
-              nameIos='ios-search'
-              nameAndroid='md-search'
-              style={[styles.searchIcon, styles.searchIconSearch]}
-            />
-            {this.state.searching && <VectorIcon
-              Icon={Ionicon}
-              nameIos='ios-arrow-back'
-              nameAndroid='md-arrow-back'
-              style={[styles.searchIcon, styles.searchIconBack]}
-            />}
+            {this.state.searchInputFocused
+              ? (<TouchableOpacity
+                  onPress={() => { this._refTextInput.blur(); }}
+                >
+                  <VectorIcon
+                    Icon={Ionicon}
+                    nameIos='ios-arrow-back'
+                    nameAndroid='md-arrow-back'
+                    style={[styles.searchIcon, styles.searchIconBack]}
+                  />
+                </TouchableOpacity>)
+              : (<VectorIcon
+                Icon={Ionicon}
+                nameIos='ios-search'
+                nameAndroid='md-search'
+                style={[styles.searchIcon, styles.searchIconSearch]}
+              />)
+            }
           </View>
           <View style={[styles.searchInput]}>
             <TextInput
@@ -121,8 +172,8 @@ export default class HeaderComponent extends Component
               //
               onChangeText={this.handleSearchChangeText}
               // onChange={this.handleSearchChange}
-              onBlur={this.handleSearchBlur}
-              onFocus={this.handleSearchFocus}
+              onBlur={this.handleSearchInputBlur}
+              onFocus={this.handleSearchInputFocus}
               //
               ref={ref => { return this._refTextInput = ref; }}
             />
@@ -137,7 +188,7 @@ export default class HeaderComponent extends Component
           </View>
         </View>
         {/* .end#Search box */}
-      </View>
+      </Ani.View>
     );
   }
 

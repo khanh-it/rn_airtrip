@@ -10,20 +10,24 @@ const theme = ESS.value('$theme');
 const dfStyles = {
     //
     root: {
-
+        // backgroundColor: 'red',
     },
     //
     header: {
+        // backgroundColor: 'blue',
+    },
+    headerTitle: {
         paddingTop: 20,
         paddingBottom: 5
     },
-    headerTitle: {
+    headerTitleText: {
         color: ESS.value('$textColor'),
         fontSize: '1rem',
         fontWeight: 'bold'
     },
     // search
     search: {
+        // backgroundColor: 'green',
         borderBottomWidth: 1,
         borderBottomColor: '#d8d8d8'
     },

@@ -4,6 +4,13 @@ import Model from '../Model';
 import UserModel from '../UserModel';
 import MsgModel from '../MsgModel';
 
+import {
+  msgSet
+} from '../../actions/msg';
+import {
+  userSet
+} from '../../actions/user';
+
 /**
  * @class MsgListModel
  */
@@ -66,7 +73,7 @@ export default class MsgListModel extends Model
      */
     storeMsgData(data)
     {
-      dispatch(msgAdd(data));
+      this._store.dispatch(msgAdd(data));
     }
 
     /**
@@ -74,7 +81,7 @@ export default class MsgListModel extends Model
      */
     markMsgRead(data)
     {
-      dispatch(msgEdit(data));
+      this._store.dispatch(msgEdit(data));
     }
 
     /**
@@ -82,7 +89,7 @@ export default class MsgListModel extends Model
      */
     setMsgs(data)
     {
-      dispatch(msgSet(data));
+      this._store.dispatch(msgSet(data));
     }
 
     /**
@@ -90,6 +97,6 @@ export default class MsgListModel extends Model
      */
     setUsers(data)
     {
-      dispatch(userSet(data));
+      this._store.dispatch(userSet(data));
     }
 }

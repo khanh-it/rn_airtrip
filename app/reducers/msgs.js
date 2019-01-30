@@ -8,10 +8,10 @@ import {
     MSG_SET
 } from '../actions/constants';
 //
-// import { msgs as msgsData } from './_generator';
+import { msgs as msgsData } from './_generator';
 
 let defaultData = []; // default data
-// defaultData = msgsData.concat([]);
+defaultData = msgsData.concat([]);
 
 /**
  * 
