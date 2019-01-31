@@ -2,17 +2,14 @@
  * 
  */
 import React, { Component } from "react";
+import ESS from 'react-native-extended-stylesheet';
 //
 import {
-  ScrollView,
   View,
-  Image,
-  Button,
-  TouchableWithoutFeedback
+  TouchableOpacity,
+  Keyboard
 } from 'react-native';
-import {
-  Text
-} from 'react-native-my';
+// import { Text } from 'react-native-my';
 // Css
 import styles from './styles';
 
@@ -33,30 +30,60 @@ export default class HomeScreen extends Component {
     };
 
     // Bind method(s)
-    this.onMainNav = this.onMainNav.bind(this);
+    this.handleTouchOverlay = this.handleTouchOverlay.bind(this);
+    this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
+    this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount()
+  {
+    // Hide body overlay
+    // this.hideBodyOverlay();
+  }
+
+  /**
+   * Hide body overlay
+   */
+  hideBodyOverlay()
+  {
+    this._refViewBodyOverlay.setNativeProps(ESS.value('$hidden'));
+  }
+
+  /**
+   * Show body overlay
+   */
+  showBodyOverlay()
+  {
+    this._refViewBodyOverlay.setNativeProps(styles.bodyOverlay);
+  }
 
   /**
    * 
-   * @param {*} nav 
    * @param {*} evt 
    */
-  onMainNav(nav, evt) {
-    switch (nav.toLowerCase()) {
-      // 
-      case 'domestic': {
+  handleTouchOverlay(evt)
+  {
+    Keyboard.dismiss(evt);
+    // Hide body overlay
+    this.hideBodyOverlay();
+  }
 
-      } break;
-      //
-      case 'overseas': {
-        // Open webview
-        $g.utils.WebView.main.open({
-          uri: $g.configs.URL.overseas_secure
-        });
-      } break;
-    }
+  /**
+   * 
+   */
+  handleSearchInputFocus(evt)
+  {
+    // Show body overlay
+    this.showBodyOverlay();
+  }
+
+  /**
+   * 
+   */
+  handleSearchInputBlur(evt)
+  {
+    // Hide body overlay
+    this.hideBodyOverlay();
   }
 
   render() {
@@ -65,9 +92,26 @@ export default class HomeScreen extends Component {
 
     //
     return (
-      <View style={[styles.root]} >
-        <HeaderComponent key="header" />
-        <BodyComponent />
+      <View style={[styles.root]}>
+        <HeaderComponent
+          ref={ref => { this._refViewHeader = ref; }}
+          handleSearchInputFocus={this.handleSearchInputFocus}
+          handleSearchInputBlur={this.handleSearchInputBlur}
+        />
+        <View
+          style={[styles.bodyWrap]}
+          // ref={ref => { this._refViewBodyWrap = ref; }}
+        >
+          <BodyComponent
+            ref={ref => { this._refViewBody = ref; }}
+          />
+          <TouchableOpacity
+            ref={ref => { this._refViewBodyOverlay = ref; }}
+            style={[ESS.value('$floating'), styles.bodyOverlay, ESS.value('$hidden')]}
+            activeOpacity={0.2}
+            onPress={this.handleTouchOverlay}
+          />
+        </View>
       </View>
     );
   }

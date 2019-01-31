@@ -11,7 +11,7 @@ const dfStyles = {
     //
     root: {
         flex: 1,
-        $outline: 1,
+        // $outline: 1,
         backgroundColor: '#f7f7f7',
     },
     //
@@ -27,7 +27,7 @@ const dfStyles = {
     },
     // message list
     msgList: {
-        $outline: 1,
+        // $outline: 1,
         borderColor: 'blue',
         width: '100%',
         height: '100%',

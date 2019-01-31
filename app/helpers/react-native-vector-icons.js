@@ -13,14 +13,14 @@ import { Platform } from 'react-native';
   */
 export function vectorIcon(Icon, props = {})
 {
-    let { name, nameIos, nameAndroid, ..._props } = props;
+    let { name, nameIos, nameAndroid, iconRef, ..._props } = props;
     if (!name) {
         if ((Platform.OS === 'ios') && nameIos) {
-            name = nameIos    
+            name = nameIos;
         }
         if ((Platform.OS === 'android') && nameAndroid) {
-            name = nameAndroid    
+            name = nameAndroid;
         }
     }
-    return <Icon name={name} {..._props} />
+    return <Icon name={name} ref={iconRef} {..._props} />
 }

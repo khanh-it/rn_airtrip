@@ -47,6 +47,7 @@ export default class HeaderComponent extends Component
     this.handleSearchChangeText = this.handleSearchChangeText.bind(this);
     this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
     this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
+    this._switchIconSearch = this._switchIconSearch.bind(this);
   }
 
   onComponentDidMount()
@@ -67,21 +68,43 @@ export default class HeaderComponent extends Component
 
   /**
    * 
+   * @param {boolean}} isFocused
+   * @returns this
+   */
+  _switchIconSearch(isFocused)
+  {
+    if (isFocused) {
+      this._refIconArrowBack.setNativeProps(ESS.value('$unhidden'));
+      this._refIconSearch.setNativeProps(ESS.value('$hidden'));
+    } else {
+      this._refIconArrowBack.setNativeProps(ESS.value('$hidden'));
+      this._refIconSearch.setNativeProps(ESS.value('$unhidden'));
+    }
+    return this;
+  }
+
+  /**
+   * 
    * @param {Object} evt The event
    */
   handleSearchInputBlur(evt, opts = {})
   {
-    // this.refViewHead.fadeInDown();
-    let duration = 500;
+    // Trigger
+    let { handleSearchInputBlur: handle } = this.props;
+    handle = handle || (() => {});
+    if (false === handle(evt)) {
+      return;
+    }
+    //.end
+    let duration = 200;
     this.refViewHead.transitionTo(
       { height: this.compLayouts['vHeadTitle'].height },
       duration,
-      'ease-in-out'
+      'ease-in'
     );
     setTimeout(() => {
-      this.setState(() => ({ searchInputFocused: false }));
-    }, duration + 32);
-    //
+      this._switchIconSearch(false);
+    }, duration);
   }
 
   /**
@@ -90,17 +113,23 @@ export default class HeaderComponent extends Component
    */
   handleSearchInputFocus(evt)
   {
-    // this.refViewHead.fadeOutUp();
-    let duration = 500;
+    // Trigger
+    let { handleSearchInputFocus: handle } = this.props;
+    handle = handle || (() => {});
+    if (false === handle(evt)) {
+      return;
+    }
+    //.end
+    let duration = 200;
     this.refViewHead.transition(
       { height: this.compLayouts['vHeadTitle'].height },
       { height: 0 },
       duration,
-      'ease-in-out'
+      'ease-out'
     );
     setTimeout(() => {
-      this.setState(() => ({ searchInputFocused: true }))
-    }, duration + 32);
+      this._switchIconSearch(true);
+    }, duration);
   }
 
   _renderHeadTitle()
@@ -112,7 +141,7 @@ export default class HeaderComponent extends Component
     return (
       <Ani.View
         style={[styles.header]}
-        ref={ref => { this.refViewHead = ref; }}
+        ref={ref => { $g._refViewHead = this.refViewHead = ref; }}
       >
         <View
           style={[styles.headerTitle]}
@@ -126,9 +155,7 @@ export default class HeaderComponent extends Component
             }
           }}
         >
-          <Text style={[ESS.value('$textCenter'), styles.headerTitleText]}>
-            {titleText}
-          </Text>
+          <Text style={[ESS.value('$textCenter'), styles.headerTitleText]}>{titleText}</Text>
         </View>
       </Ani.View>
     );
@@ -136,29 +163,38 @@ export default class HeaderComponent extends Component
 
   _renderInputSearch()
   {
+    let {
+      searchInputFocused 
+    } = this.state;
+
     return (
       <Ani.View style={[ESS.value('$p10'), styles.search]}>
         {/* Search box */}
         <View style={[styles.searchBox]}>
           <View style={[styles.searchIcons, styles.searchIconsLeft]}>
-            {this.state.searchInputFocused
-              ? (<TouchableOpacity
-                  onPress={() => { this._refTextInput.blur(); }}
-                >
-                  <VectorIcon
-                    Icon={Ionicon}
-                    nameIos='ios-arrow-back'
-                    nameAndroid='md-arrow-back'
-                    style={[styles.searchIcon, styles.searchIconBack]}
-                  />
-                </TouchableOpacity>)
-              : (<VectorIcon
+            <TouchableOpacity
+              style={[!searchInputFocused && ESS.value('$hidden')]}
+              onPress={() => { this._refTextInput.blur(); }}
+              ref={ref => { this._refIconArrowBack = ref; }}
+            >
+              <VectorIcon
+                Icon={Ionicon}
+                nameIos='ios-arrow-back'
+                nameAndroid='md-arrow-back'
+                style={[styles.searchIcon, styles.searchIconBack]}
+              />
+            </TouchableOpacity>
+            <View
+              style={[searchInputFocused && ESS.value('$hidden')]}
+              ref={ref => { this._refIconSearch = ref; }}
+            >
+              <VectorIcon
                 Icon={Ionicon}
                 nameIos='ios-search'
                 nameAndroid='md-search'
                 style={[styles.searchIcon, styles.searchIconSearch]}
-              />)
-            }
+              />
+            </View>
           </View>
           <View style={[styles.searchInput]}>
             <TextInput
@@ -168,6 +204,7 @@ export default class HeaderComponent extends Component
               placeholderTextColor={styles.searchInputTextPhColor}
               returnKeyType="search"
               // underlineColorAndroid={'transparent'}
+              contextMenuHidden={true}
               maxLength={256}
               //
               onChangeText={this.handleSearchChangeText}

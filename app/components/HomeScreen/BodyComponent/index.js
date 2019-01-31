@@ -3,15 +3,18 @@
  */
 import React, { PureComponent } from "react";
 import ESS from 'react-native-extended-stylesheet';
+import * as Ani from 'react-native-animatable';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 //
 import {
   View,
   FlatList,
   Button,
-  TouchableOpacity,
-  TouchableHighlight,
-  TouchableWithoutFeedback
+  ImageBackground,
+  Alert,
+  // TouchableOpacity,
+  // TouchableHighlight,
+  // TouchableWithoutFeedback
 } from 'react-native';
 import {
   Text,
@@ -56,6 +59,11 @@ export default class BodyComponent extends PureComponent
   /**
    * @var  {Object}
    */
+  _compLayouts = {};
+
+  /**
+   * @var  {Object}
+   */
   _headers = {};
 
   componentDidMount()
@@ -66,6 +74,30 @@ export default class BodyComponent extends PureComponent
     }));
   }
 
+  hideOverlay()
+  {
+
+  }
+
+  showOverlay()
+  {
+    
+  }
+
+  _compLayout(evt, key)
+  {
+    let { nativeEvent: { layout } } = evt || {};
+    this._compLayouts[key] = layout;
+    //
+    /* if ('viewMsgList' === key) {
+      let height = Math.round(layout.height / 2);
+      console.log('layout height: ', key, layout, height);
+      this._refViewFLZero.setNativeProps({ height });
+    } */
+    //.end
+    return this;
+  }
+
   _formatMsgDataList(dataList)
   {
     let sections = {
@@ -73,30 +105,40 @@ export default class BodyComponent extends PureComponent
     };
   }
 
-  _renderSync()
+  _renderViewSync()
   {
     let {
       syncText
     } = this.state;
 
     return (
-      <View style={[ESS.value('$p20'), styles.sync]}>
-        <Text style={[ESS.value('$textCenter'), styles.syncText]}>
-          {syncText}
-        </Text>
+      <View
+        style={[ESS.value('$p20'), styles.sync]}
+        ref={ref => { this._refViewSync = ref; }}
+        onLayout={(evt) => { this._compLayout(evt, 'viewSync'); }}
+        /* {height: 60, width: 478, y: 1, x: 1} */
+      >
+        <Text style={[ESS.value('$textCenter'), styles.syncText]}>{syncText}</Text>
       </View>
+    );
+  }
+
+  _renderViewFLZero()
+  {
+    this._vFLZeroMinHeight = Math.round($g.dimensions.window.height * 2/4);
+    return (
+      <View
+        style={{ borderWidth: 2, borderColor: 'red', width: 0, height: this._vFLZeroMinHeight }}
+        ref={ref => { this._refViewFLZero = $g._refViewFLZero = ref; }}
+        onLayout={(evt) => { this._compLayout(evt, 'viewFLZero'); }}
+      />
     );
   }
 
   _renderMsgItem({ item: contact, index })
   {
-    if (false === contact) {
-      return (
-        <View
-          style={{ borderWidth: 2, borderColor: 'green', height: 55 }}
-          ref={ref => { this._refViewFLTop = ref; }}
-        />
-      );
+    if (0 === contact) {
+      return this._renderViewFLZero();
     }
     let msg = ((contact && contact._msgs) || [])[0];
     if (!msg) {
@@ -129,7 +171,7 @@ export default class BodyComponent extends PureComponent
     let {
       contactsWithLatestMsgs: dataList
     } = this.state;
-    dataList = [false].concat(dataList);
+    dataList = [0].concat(dataList);
 
     // Reset
     this._headers = {
@@ -139,36 +181,28 @@ export default class BodyComponent extends PureComponent
     };
 
     return (
-      <View
+      <ImageBackground
+        source={require('../../../assets/img/lock_256x256.png')}
+        resizeMode="center"
         style={[ESS.value('$floating'), styles.msgList]}
         ref={ref => { this._refViewMsgList = ref; }}
+        onLayout={(evt) => { this._compLayout(evt, 'viewMsgList'); }}
         // ---
         // onStartShouldSetResponderCapture={(evt) => true}
         // onMoveShouldSetResponderCapture={(evt) => true}
         // onStartShouldSetResponder={(evt) => true}
-        onMoveShouldSetResponder={(evt) => false}
+        // onMoveShouldSetResponder={(evt) => false}
         // onResponderGrant={(evt) => { console.log('parent: onResponderGrant: '); }}
-        // onResponderReject={(evt) => {
-        //  console.log('parent: onResponderReject: ');
-        // }}
-        onResponderMove={(evt) => {
-          console.log('parent: onResponderMove: ');
-        }}
-        onResponderRelease={(evt) => {
-          console.log('parent: onResponderRelease: ');
-        }}
-        // onResponderTerminationRequest={(evt) => {
-        //   console.log('parent: onResponderTerminationRequest: ');
-        // }}
-        onResponderTerminate={(evt) => {
-          console.log('parent: onResponderTerminate: ');
-        }}
+        // onResponderReject={(evt) => { console.log('parent: onResponderReject: '); }}
+        // onResponderMove={(evt) => { console.log('parent: onResponderMove: '); }}
+        // onResponderRelease={(evt) => { console.log('parent: onResponderRelease: '); }}
+        // onResponderTerminationRequest={(evt) => { console.log('parent: onResponderTerminationRequest: '); }}
+        // onResponderTerminate={(evt) => { console.log('parent: onResponderTerminate: '); }}
         //.end
       >
         {/* <Button title="Set data 'msg'" onPress={() => { this.msgListModel.setMsgs(); }} />
         <Button title="Set data 'users'" onPress={() => { this.msgListModel.setUsers(); }} /> */}
         {/* Msg list box */}
-        
         <FlatList
           style={[styles.msgListBox]}
           ref={ref => { this._refFlatList = ref; }}
@@ -181,7 +215,7 @@ export default class BodyComponent extends PureComponent
           // onStartShouldSetResponderCapture={(evt) => true}
           // onMoveShouldSetResponderCapture={(evt) => true}
           onStartShouldSetResponder={(evt) => false}
-          onMoveShouldSetResponder={(evt) => true}
+          onMoveShouldSetResponder={(evt) => false}
           onResponderGrant={(evt) => { console.log('child: onResponderGrant: '); }}
           onResponderReject={(evt) => { console.log('child: onResponderReject: '); }}
           onResponderMove={(evt) => { console.log('child: onResponderMove: '); }}
@@ -197,45 +231,73 @@ export default class BodyComponent extends PureComponent
           snapToStart={false}
           snapToEnd={false}
           keyboardDismissMode={'on-drag'}
-          decelerationRate={'fast'}
-          onScrollBeginDrag={(evt) => { console.log('onScrollBeginDrag: '); }}
-          onScroll={(evt) => {
+          // decelerationRate={0.8}
+          onScrollBeginDrag={(evt) => {
+            // console.log('onScrollBeginDrag: ');
             let { contentOffset } = evt.nativeEvent;
-            console.log('onScroll: ', contentOffset);
-            this._scrollContentOffset = this._scrollContentOffset || contentOffset;
-            if (this._scrollContentOffset.y > contentOffset.y) {
-              this._refViewFLTop.setNativeProps({
-                height: 55 + (this._scrollContentOffset.y - contentOffset.y)
-              });
-            }
             this._scrollContentOffset = contentOffset;
           }}
-          onScrollEndDrag={(evt) => { console.log('onScrollEndDrag: '); }}
+          onScroll={(evt) => {
+            let { contentOffset } = evt.nativeEvent;
+            if (this._scrollContentOffset) {
+              let threshold = 50;
+              let newY = (this._scrollContentOffset.y - contentOffset.y);
+              newY = (newY != 0) ? ((newY > 0) ? 1 : -1) : 0; 
+              let height = Math.max(this._vFLZeroMinHeight, this._compLayouts['viewFLZero'].height) + newY;
+              // console.log('onScroll: ', newY, height);
+              // this._refViewFLZero.setNativeProps({ height });
+              // 
+              if (Math.abs(0 - contentOffset.y) <= threshold) {
+                // Alert.alert('show secure password...');
+                console.log('show secure password...');
+              }
+              //.end
+            }
+            // this._scrollContentOffset = contentOffset;
+          }}
+          onScrollEndDrag={(evt) => {
+            // this._scrollContentOffset = null;
+            let threshold = 50;
+            let { contentOffset } = evt.nativeEvent;
+            let vFL1stMinHeight = 60;
+            let y = (this._scrollContentOffset.y - contentOffset.y);
+            let viewOffset = 0;
+            if (contentOffset.y >= vFL1stMinHeight) {
+              viewOffset = vFL1stMinHeight;
+            }
+            console.log('onScrollEndDrag: ', y, contentOffset, viewOffset);
+            if ((y > 0) || (y < 0 && y >= (-1 * threshold))) {
+              this._refFlatList.scrollToIndex({ index: 1, viewOffset });
+            }
+          }}
           // onMomentumScrollBegin={(evt) => { console.log('onMomentumScrollBegin: ', evt); }}
           // onMomentumScrollEnd={(evt) => { console.log('onMomentumScrollEnd: ', evt); }}
           onLayout={(evt) => {
-            // let { x, y, width, height } = evt.nativeEvent;
-            console.log('onLayout: ', evt.nativeEvent);
-            this._refFlatList.scrollToIndex({
-              index: 1, animated: false
-            });
+            this._compLayout(evt, 'viewFlatList');
+            this._refFlatList.scrollToIndex({ index: 1, animated: false });
             setTimeout(() => {
               $g._refFlatList = this._refFlatList;
-            }, 256);
+              this._refViewBody.setNativeProps({
+                opacity: 1
+              });
+            }, 64);
           }}
           //.end
           removeClippedSubviews={true}
         />
         {/* .end#Msg list box */}
-      </View>
+      </ImageBackground>
     );
   }
 
   render() {
     return (
-      <View style={[styles.root]}>
+      <View
+        style={[styles.root, { opacity: 0 }]}
+        ref={ref => { this._refViewBody = ref; }}
+      >
       {/* Turn sync */}
-        {this._renderSync()}
+        {this._renderViewSync()}
       {/* .end#Turn sync */}
       {/* Msg list */}
         {this._renderMsgList()}
