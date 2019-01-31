@@ -33,6 +33,7 @@ export default class HomeScreen extends Component {
     this.handleTouchOverlay = this.handleTouchOverlay.bind(this);
     this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
     this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
+    this.handleScrolledYOffset = this.handleScrolledYOffset.bind(this);
   }
 
   componentDidMount()
@@ -86,6 +87,21 @@ export default class HomeScreen extends Component {
     this.hideBodyOverlay();
   }
 
+  /**
+   * 
+   */
+  handleScrolledYOffset(evt)
+  {
+    // Hide body overlay
+    let { y }= evt;
+    // console.log('handleScrolledYOffset: ', evt);
+    if (y < 0) {
+      this._refViewHeaderWrap.setNativeProps(ESS.value('$hidden'));
+    } else {
+      this._refViewHeaderWrap.setNativeProps(ESS.value('$unhidden'));
+    }
+  }
+
   render() {
     //
     let { bgSrc } = this.state;
@@ -93,17 +109,23 @@ export default class HomeScreen extends Component {
     //
     return (
       <View style={[styles.root]}>
-        <HeaderComponent
-          ref={ref => { this._refViewHeader = ref; }}
-          handleSearchInputFocus={this.handleSearchInputFocus}
-          handleSearchInputBlur={this.handleSearchInputBlur}
-        />
+        <View
+          ref={ref => { this._refViewHeaderWrap = ref; }}
+          style={[styles.headerWrap]}
+        >
+          <HeaderComponent
+            ref={ref => { this._refViewHeader = ref; }}
+            handleSearchInputFocus={this.handleSearchInputFocus}
+            handleSearchInputBlur={this.handleSearchInputBlur}
+          />
+        </View>
         <View
           style={[styles.bodyWrap]}
           // ref={ref => { this._refViewBodyWrap = ref; }}
         >
           <BodyComponent
             ref={ref => { this._refViewBody = ref; }}
+            handleScrolledYOffset={this.handleScrolledYOffset}
           />
           <TouchableOpacity
             ref={ref => { this._refViewBodyOverlay = ref; }}

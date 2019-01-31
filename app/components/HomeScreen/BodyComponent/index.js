@@ -187,18 +187,6 @@ export default class BodyComponent extends PureComponent
         style={[ESS.value('$floating'), styles.msgList]}
         ref={ref => { this._refViewMsgList = ref; }}
         onLayout={(evt) => { this._compLayout(evt, 'viewMsgList'); }}
-        // ---
-        // onStartShouldSetResponderCapture={(evt) => true}
-        // onMoveShouldSetResponderCapture={(evt) => true}
-        // onStartShouldSetResponder={(evt) => true}
-        // onMoveShouldSetResponder={(evt) => false}
-        // onResponderGrant={(evt) => { console.log('parent: onResponderGrant: '); }}
-        // onResponderReject={(evt) => { console.log('parent: onResponderReject: '); }}
-        // onResponderMove={(evt) => { console.log('parent: onResponderMove: '); }}
-        // onResponderRelease={(evt) => { console.log('parent: onResponderRelease: '); }}
-        // onResponderTerminationRequest={(evt) => { console.log('parent: onResponderTerminationRequest: '); }}
-        // onResponderTerminate={(evt) => { console.log('parent: onResponderTerminate: '); }}
-        //.end
       >
         {/* <Button title="Set data 'msg'" onPress={() => { this.msgListModel.setMsgs(); }} />
         <Button title="Set data 'users'" onPress={() => { this.msgListModel.setUsers(); }} /> */}
@@ -210,19 +198,6 @@ export default class BodyComponent extends PureComponent
           extraData={this.state}
           keyExtractor={(contact) => (contact.tel || Math.random().toString())}
           renderItem={this._renderMsgItem}
-          // initialScrollIndex={1}
-          // ---
-          // onStartShouldSetResponderCapture={(evt) => true}
-          // onMoveShouldSetResponderCapture={(evt) => true}
-          onStartShouldSetResponder={(evt) => false}
-          onMoveShouldSetResponder={(evt) => false}
-          onResponderGrant={(evt) => { console.log('child: onResponderGrant: '); }}
-          onResponderReject={(evt) => { console.log('child: onResponderReject: '); }}
-          onResponderMove={(evt) => { console.log('child: onResponderMove: '); }}
-          onResponderRelease={(evt) => { console.log('child: onResponderRelease: '); }}
-          onResponderTerminationRequest={(evt) => { console.log('parent: onResponderTerminationRequest: '); }}
-          onResponderTerminate={(evt) => { console.log('child: onResponderTerminate: '); }}
-          //.end
           // ListHeaderComponent={}
           // ListEmptyComponent={}
           // ListFooterComponent={}
@@ -231,6 +206,7 @@ export default class BodyComponent extends PureComponent
           snapToStart={false}
           snapToEnd={false}
           keyboardDismissMode={'on-drag'}
+          removeClippedSubviews={true}
           // decelerationRate={0.8}
           onScrollBeginDrag={(evt) => {
             // console.log('onScrollBeginDrag: ');
@@ -240,16 +216,23 @@ export default class BodyComponent extends PureComponent
           onScroll={(evt) => {
             let { contentOffset } = evt.nativeEvent;
             if (this._scrollContentOffset) {
+              let { handleScrolledYOffset: sYOHandler } = this.props;
+              sYOHandler = sYOHandler || (() => {});
               let threshold = 50;
-              let newY = (this._scrollContentOffset.y - contentOffset.y);
-              newY = (newY != 0) ? ((newY > 0) ? 1 : -1) : 0; 
-              let height = Math.max(this._vFLZeroMinHeight, this._compLayouts['viewFLZero'].height) + newY;
-              // console.log('onScroll: ', newY, height);
-              // this._refViewFLZero.setNativeProps({ height });
+              let scrolledYOffset = (this._scrollContentOffset.y - contentOffset.y);
+              sYOHandler({
+                y: scrolledYOffset
+              });
+              console.log('onScroll: ', scrolledYOffset, contentOffset);
               // 
               if (Math.abs(0 - contentOffset.y) <= threshold) {
                 // Alert.alert('show secure password...');
                 console.log('show secure password...');
+              }
+              //.end
+              // scroll up?
+              if (scrolledYOffset < 0) {
+                
               }
               //.end
             }
@@ -261,8 +244,10 @@ export default class BodyComponent extends PureComponent
             let { contentOffset } = evt.nativeEvent;
             let vFL1stMinHeight = 60;
             let y = (this._scrollContentOffset.y - contentOffset.y);
+            // scrolled y
+            let scrolledY = Math.round(this._vFLZeroMinHeight - contentOffset.y);
             let viewOffset = 0;
-            if (contentOffset.y >= vFL1stMinHeight) {
+            if (scrolledY >= vFL1stMinHeight) {
               viewOffset = vFL1stMinHeight;
             }
             console.log('onScrollEndDrag: ', y, contentOffset, viewOffset);
@@ -283,7 +268,6 @@ export default class BodyComponent extends PureComponent
             }, 64);
           }}
           //.end
-          removeClippedSubviews={true}
         />
         {/* .end#Msg list box */}
       </ImageBackground>
