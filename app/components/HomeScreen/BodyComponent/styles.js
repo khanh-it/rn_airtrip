@@ -25,21 +25,28 @@ const dfStyles = {
         color: '#33aaff',
         fontSize: '0.85rem'
     },
+    vFLZero: {
+        borderWidth: 2,
+        borderColor: 'red',
+        width: 0,
+    },
     // message list
     msgList: {
-        // $outline: 1,
+        $outline: 1,
+        // top: 0,
         borderColor: 'blue',
         width: '100%',
         height: '100%',
-        zIndex: 110
+    },
+    msgList_withFLTop: {
+        // top: 110,
     },
     msgListBox: {
-        // $outline: 1,
+        // $outline: 2,
         borderColor: 'red',
         flex: 1,
-        // backgroundColor: 'white',
-        // flexDirection: 'row',
     },
+    msgListBoxCC: {},
     msgListIcons: {
         justifyContent: 'center',
     },
@@ -50,7 +57,22 @@ const dfStyles = {
     msgListIcon: {
         fontSize: '1.6rem'
     },
-    //.end#search
+    //
+    btnAddMsg: {
+        height: 56,
+        width: 56,
+        borderRadius: 28,
+        backgroundColor: '#f7ad3c',
+        top: null,
+        left: null,
+        right: 45,
+        bottom: 45,
+        justifyContent: 'center'
+    },
+    btnAddMsgTxt: {
+        fontSize: 22,
+        color: 'white'
+    },
 };
 const css = {
     // theme 'light'

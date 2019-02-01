@@ -92,14 +92,7 @@ export default class HomeScreen extends Component {
    */
   handleScrolledYOffset(evt)
   {
-    // Hide body overlay
-    let { y }= evt;
-    // console.log('handleScrolledYOffset: ', evt);
-    if (y < 0) {
-      this._refViewHeaderWrap.setNativeProps(ESS.value('$hidden'));
-    } else {
-      this._refViewHeaderWrap.setNativeProps(ESS.value('$unhidden'));
-    }
+    this._refViewHeader.handleScrolledYOffset(evt);
   }
 
   render() {
@@ -112,6 +105,10 @@ export default class HomeScreen extends Component {
         <View
           ref={ref => { this._refViewHeaderWrap = ref; }}
           style={[styles.headerWrap]}
+          onLayout={({ nativeEvent }) => {
+            // alert(JSON.stringify(nativeEvent.layout));
+            // {"height": 110,"width":480,"y":0,"x":0}
+          }}
         >
           <HeaderComponent
             ref={ref => { this._refViewHeader = ref; }}

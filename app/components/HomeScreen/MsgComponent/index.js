@@ -56,7 +56,7 @@ export default class MsgComponent extends Component
         </View>)}   
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => { alert('clicked'); }}
+          onPress={this.props.handleSelectMsg}
         >
           <View style={[styles.body]}>
             <View style={[styles.col, styles.col1]}>

@@ -59,6 +59,19 @@ export default class HeaderComponent extends Component
 
   /**
    * 
+   */
+  getRefTextInput()
+  {
+    return this._refTextInput;
+  }
+
+  getRefViewHead()
+  {
+    return this.refViewHead;
+  }
+
+  /**
+   * 
    * @param {Object} evt The event
    */
   handleSearchChangeText(evt)
@@ -132,6 +145,30 @@ export default class HeaderComponent extends Component
     }, duration);
   }
 
+  /**
+   * 
+   */
+  handleScrolledYOffset(evt)
+  {
+    // Hide body overlay
+    let { y } = evt;
+    let _h = this.compLayouts['viewSearch'].height;
+    let height = _h + y;
+    height = (height <= 0) ? 0 : Math.min(height, _h);
+    return;
+    if (height > 0) {
+      return;
+    }
+    // console.log('sYOHandler: ', height, y);
+    let _sYOHandlerTimer = this._sYOHandlerTimer;
+    // clearTimeout(this._sYOHandlerTimer);
+    // this._sYOHandlerTimer = setTimeout(() => {
+      // clearTimeout(_sYOHandlerTimer);
+      // return console.log('sYOHandler --- set: ', height, y);
+      this._refSearch.setNativeProps({ height });
+    // }, 0);
+  }
+
   _renderHeadTitle()
   {
     let {
@@ -168,9 +205,18 @@ export default class HeaderComponent extends Component
     } = this.state;
 
     return (
-      <Ani.View style={[ESS.value('$p10'), styles.search]}>
+      <View
+        ref={ref => { this._refSearch = ref; }}
+        style={[ESS.value('$p10'), styles.search]}
+        onLayout={(event) => {
+          this.compLayouts['viewSearch'] = this.compLayouts['viewSearch'] || event.nativeEvent.layout;
+        }}
+      >
         {/* Search box */}
-        <View style={[styles.searchBox]}>
+        <Ani.View
+          ref={ref => { this._refInputSearch = ref; }}
+          style={[styles.searchBox]}
+        >
           <View style={[styles.searchIcons, styles.searchIconsLeft]}>
             <TouchableOpacity
               style={[!searchInputFocused && ESS.value('$hidden')]}
@@ -223,9 +269,9 @@ export default class HeaderComponent extends Component
                 style={[styles.searchIcon, styles.searchIconBack]}
               />}
           </View>
-        </View>
+        </Ani.View>
         {/* .end#Search box */}
-      </Ani.View>
+      </View>
     );
   }
 
