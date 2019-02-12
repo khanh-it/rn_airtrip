@@ -22,13 +22,13 @@ export default function msgs(state = defaultData /* set default value */, action
     switch (action.type) {
         // MSG_ADD
         case MSG_ADD:
-            state = state.concat([action.msg]);
+            state = state.concat([action.data]);
         break; // #end
         // MSG_DEL
         case MSG_DEL:
-            let foundUserIdx = state.findIndex(msg => (msg.id === action.id));
-            if (foundUserIdx >= 0) {
-                state = state.splice(foundUserIdx, 1);
+            let foundIdx = state.findIndex(item => (item.id === action.id));
+            if (foundIdx >= 0) {
+                state = state.splice(foundIdx, 1);
             }
         break; // #end
         // MSG_EDIT

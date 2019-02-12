@@ -10,7 +10,7 @@ export default class MsgEntity extends Entity
      * 
      * @param {object} data 
      */
-    constructor(data)
+    constructor(data = {})
     {
         super(data);
     }

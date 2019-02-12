@@ -19,6 +19,16 @@ export default class UserEntity extends Entity
      * 
      * @returns {String}
      */
+    key()
+    {
+        let key = this.tel || Math.random().toString();
+        return key;
+    }
+
+    /**
+     * 
+     * @returns {String}
+     */
     fullname()
     {
         return [

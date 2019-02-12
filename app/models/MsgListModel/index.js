@@ -41,39 +41,27 @@ export default class MsgListModel extends Model
         msg_cnt: 1
       }, _opts);
       // Do
-      let dLstUser = this._userModel.dataList({
-        favorite: true
-      });
+      let dLstUser = this._userModel.dataList({ favorite: true });
       let dLstMsg = this._msgModel.dataList();
       let contacts = dLstUser.map((userEnt, idx1st) => {
-        let msgs = [];
         let lastMsgDate = null;
-        dLstMsg.forEach((msgEnt, idx2nd) => {
-          //
-          if (((msgEnt.tel == userEnt.tel)
-              || (!msgEnt.favorite && userEnt.favorite)
-            ) && (msgs.length < opts.msg_cnt)
-          ) {
-            if (!lastMsgDate || (msgEnt.date > lastMsgDate)) {
-              msgs.push(msgEnt);
-            }
-            lastMsgDate = msgEnt.date;
-          }
+        let msgs = dLstMsg.filter((msgEnt, idx2nd) => {
+          return (msgEnt.tel == userEnt.tel)
+          || (/* @TODO: remove ! mark */!msgEnt.favorite && userEnt.favorite)
+          ;
         });
+        if (msgs.length) {
+          msgs.sort(function(msg1, msg2) {
+            return msg2._date() - msg1._date(); // latest first
+          });
+        }
+        msgs = msgs.slice(0, opts.msg_cnt);
         let contact = Object.assign(userEnt, {
           _msgs: msgs
         });
         return contact;
       });
       return contacts;
-    }
-
-    /**
-     * 
-     */
-    storeMsgData(data)
-    {
-      this._store.dispatch(msgAdd(data));
     }
 
     /**
@@ -98,5 +86,25 @@ export default class MsgListModel extends Model
     setUsers(data)
     {
       this._store.dispatch(userSet(data));
+    }
+
+    /**
+     * Get latest used contact(s)
+     * @param {Object} opts Options
+     * @returns Array
+     */
+    getLatestUsedContacts(_opts = {})
+    {
+      // Get, format input(s)
+      var opts = Object.assign({
+        cnt: 10
+      }, _opts);
+      // Do
+      let dLstUser = this._userModel.dataList();
+      let contacts = [];
+      for (let idx = 0; idx < opts.cnt; idx++) {
+        contacts.push(dLstUser[idx]);
+      }
+      return contacts;
     }
 }

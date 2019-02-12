@@ -174,7 +174,7 @@ export default class BodyComponent extends PureComponent
     let {
       contactsWithLatestMsgs: dataList
     } = this.state;
-    dataList = [0].concat(dataList);
+    dataList = (dataList.length > 0) ? [0].concat(dataList) : dataList;
 
     // Reset
     this._headers = {
@@ -270,7 +270,9 @@ export default class BodyComponent extends PureComponent
           // onMomentumScrollEnd={(evt) => { console.log('onMomentumScrollEnd: ', evt); }}
           onLayout={(evt) => {
             this._compLayout(evt, 'viewFlatList');
-            this._refFlatList.scrollToIndex({ index: 1, animated: false, viewOffset: 0 });
+            if (dataList.length > 0) {
+              this._refFlatList.scrollToIndex({ index: 1, animated: false, viewOffset: 0 });
+            }
             setTimeout(() => {
               $g._refFlatList = this._refFlatList;
               this._refViewBody.setNativeProps({ opacity: 1 });

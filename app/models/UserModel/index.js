@@ -34,7 +34,7 @@ export default class UserModel extends Model
         //
         let dataList = super.dataList();
         // +++ Include 'Favorites'?
-        if (opts.favorite && (dataList instanceof Array)) {
+        if (opts.favorite/* && (dataList instanceof Array)*/) {
             dataList = ([
                 new UserEntity({
                     first_name: 'Favorites',
@@ -44,6 +44,33 @@ export default class UserModel extends Model
                 })
             ]).concat(dataList);
         }
+
+        // Filter?
+        let filters = _opts.filters || {};
+        // ---
+        if (Object.keys(filters).length) {
+            dataList = dataList.filter((item, idx) => {
+                let rtn = true;
+                // Filter by: fullname or tel?
+                if (filters.fullname_or_tel) {
+                    rtn = false;
+                    let fnOrTelLC = filters.fullname_or_tel.toString().toLowerCase();
+                    let fnLC = item.fullname().toString().toLowerCase();
+                    let telLC = item.tel.toString().toLowerCase();
+                    if ((fnLC.indexOf(fnOrTelLC) >= 0)
+                        || (telLC.indexOf(fnOrTelLC) >= 0)
+                    ) {
+                        rtn = true;
+                    }
+                    // console.log('fnLC: ', fnLC, fnLC.indexOf(fnOrTelLC));
+                    // console.log('telLC: ', telLC, telLC.indexOf(fnOrTelLC));
+                    // console.log('rtn: ', rtn);
+                }
+                return rtn;
+            });
+        }
+        //.end
+
         // Return
         return dataList;
     }
