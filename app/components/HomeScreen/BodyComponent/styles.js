@@ -65,8 +65,8 @@ const dfStyles = {
         backgroundColor: '#f7ad3c',
         top: null,
         left: null,
-        right: 45,
-        bottom: 45,
+        right: 22,
+        bottom: 22,
         justifyContent: 'center'
     },
     btnAddMsgTxt: {

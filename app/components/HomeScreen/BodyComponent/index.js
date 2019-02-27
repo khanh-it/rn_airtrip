@@ -11,6 +11,7 @@ import {
   FlatList,
   ImageBackground,
   Alert,
+  Button,
   TouchableOpacity,
   // TouchableHighlight,
   // TouchableWithoutFeedback
@@ -90,7 +91,7 @@ export default class BodyComponent extends PureComponent
 
   handleSelectMsg(msg, evt)
   {
-    $g.navServTop.navigate('/msg', { msg });
+    $g.navServTop.navigate('/msgs', { msg });
   }
 
   handleAddMsg(evt)
@@ -156,6 +157,13 @@ export default class BodyComponent extends PureComponent
         }
       }
     }
+    // @TODO: debug dev
+    if (1 === index) {
+      setTimeout(() => {
+        this.handleSelectMsg(msg, null);
+      }, 256);
+    }
+    //.end
     return (
       <MsgComponent
         header={header}
@@ -191,8 +199,10 @@ export default class BodyComponent extends PureComponent
         ref={ref => { this._refViewMsgList = ref; }}
         onLayout={(evt) => { this._compLayout(evt, 'viewMsgList'); }}
       >
-        {/* <Button title="Set data 'msg'" onPress={() => { this.msgListModel.setMsgs(); }} />
-        <Button title="Set data 'users'" onPress={() => { this.msgListModel.setUsers(); }} /> */}
+        {(dataList.length <= 0) && (<View style={[ESS.value('$floating')]}>
+          <Button key="btnSetDataMsg" title="Set data 'msg'" onPress={() => { this.msgListModel.setMsgs(); }} />
+          <Button key="btnSetDataUser" title="Set data 'users'" onPress={() => { this.msgListModel.setUsers(); }} />
+        </View>)}
         {/* Msg list box */}
         <FlatList
           style={[styles.msgListBox]}
@@ -270,13 +280,15 @@ export default class BodyComponent extends PureComponent
           // onMomentumScrollEnd={(evt) => { console.log('onMomentumScrollEnd: ', evt); }}
           onLayout={(evt) => {
             this._compLayout(evt, 'viewFlatList');
-            if (dataList.length > 0) {
-              this._refFlatList.scrollToIndex({ index: 1, animated: false, viewOffset: 0 });
+            if (!this._compLayouts['viewFlatList']) {
+              if (dataList.length > 0) {
+                this._refFlatList.scrollToIndex({ index: 1, animated: false, viewOffset: 0 });
+              }
+              setTimeout(() => {
+                $g._refFlatList = this._refFlatList;
+                this._refViewBody.setNativeProps({ opacity: 1 });
+              }, 32);
             }
-            setTimeout(() => {
-              $g._refFlatList = this._refFlatList;
-              this._refViewBody.setNativeProps({ opacity: 1 });
-            }, 32);
           }}
           //.end
         />
@@ -288,7 +300,7 @@ export default class BodyComponent extends PureComponent
   render() {
     return (
       <View
-        style={[styles.root, { opacity: 0 }]}
+        style={[styles.root, { opacity: 1 }]}
         ref={ref => { this._refViewBody = ref; }}
       >
       {/* Turn sync */}

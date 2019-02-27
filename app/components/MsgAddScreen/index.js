@@ -11,7 +11,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback
 } from 'react-native';
 import {
   Text,

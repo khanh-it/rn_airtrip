@@ -32,6 +32,32 @@ export default class MsgModel extends Model
         super(data);
     }
 
+    dataList(_opts = {})
+    {
+        // Get, format input(s)
+        let opts = Object.assign({}, _opts);
+        // +++
+        let { filters = {} } = opts;
+
+        // Fetch data
+        let dataList = super.dataList();
+
+        // Filter?
+        if (Object.keys(filters).length) {
+            dataList = dataList.filter((msgEnt, idx) => {
+                let result = true;
+                if (filters.tel) {
+                    result = msgEnt.isTelMatched(filters.tel);
+                    console.log("result: ", result, filters.tel);
+                }
+                return result;
+            });
+        }
+
+        // Return
+        return dataList;
+    }
+
     /**
      * 
      */

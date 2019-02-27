@@ -1,137 +1,69 @@
+import { createStackNavigator, createAppContainer } from "react-navigation";
+// Import component(s)
+import HomeScreen from '../HomeScreen/HomeComponent';
+import MsgListScreen from '../MsgListScreen';
+import MsgAddScreen from '../MsgAddScreen';
+import ModalScreen from '../ModalScreen';
+import WebViewScreen from '../WebViewScreen';
+
 /**
  * 
  */
-import React, { Component } from "react";
-import ESS from 'react-native-extended-stylesheet';
-//
-import {
-  View,
-  TouchableOpacity,
-  Keyboard
-} from 'react-native';
-// import { Text } from 'react-native-my';
-// Css
-import styles from './styles';
+export const HomeStackNavigator = createStackNavigator({
+    '/home':  {
+        screen: HomeScreen
+    },
+    // Add new message
+    '/msg/add': {
+        screen: MsgAddScreen,
+        path: 'msg/add'
+    },
+    // View all messages of a contact
+    '/msgs':  {
+        screen: MsgListScreen
+    }
+},
+{
+    // initialRouteName: '/',
+    headerMode : 'none',
+    /* The header config from HomeScreen is now here */
+    defaultNavigationOptions: {
+        title: 'Messaging',
+        headerBackTitle: 'BackTitle',
+        headerTruncatedBackTitle: 'TruncatedBackTitle',
+        // headerLeft: (<Text>Nut back</Text>),
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+    },
+});
 
-// Component(s)
-import HeaderComponent from './HeaderComponent';
-import BodyComponent from './BodyComponent';
+export const RootStackNavigator = createStackNavigator({
+    '/':  {
+        screen: HomeStackNavigator
+    },
+    '/modal':  {
+        screen: ModalScreen,
+    },
+    '/webview': {
+        screen: WebViewScreen
+    }
+},
+{
+    // initialRouteName: '/',
+    mode: 'modal',
+    headerMode : 'none',
+});
 
 /**
- * @class HomeScreen
+ * @class RootScreen (AppContainer)
  */
-export default class HomeScreen extends Component {
-  constructor(props) {
-    super(props);
+const RootScreen = createAppContainer(RootStackNavigator);
+//
+export default RootScreen;
 
-    // Initial state
-    this.state = {
-      auth: null
-    };
 
-    // Bind method(s)
-    this.handleTouchOverlay = this.handleTouchOverlay.bind(this);
-    this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
-    this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
-    this.handleScrolledYOffset = this.handleScrolledYOffset.bind(this);
-  }
-
-  componentDidMount()
-  {
-    // Hide body overlay
-    // this.hideBodyOverlay();
-  }
-
-  /**
-   * Hide body overlay
-   */
-  hideBodyOverlay()
-  {
-    this._refViewBodyOverlay.setNativeProps(ESS.value('$hidden'));
-  }
-
-  /**
-   * Show body overlay
-   */
-  showBodyOverlay()
-  {
-    this._refViewBodyOverlay.setNativeProps(styles.bodyOverlay);
-  }
-
-  /**
-   * 
-   * @param {*} evt 
-   */
-  handleTouchOverlay(evt)
-  {
-    Keyboard.dismiss(evt);
-    // Hide body overlay
-    this.hideBodyOverlay();
-  }
-
-  /**
-   * 
-   */
-  handleSearchInputFocus(evt)
-  {
-    // Show body overlay
-    this.showBodyOverlay();
-  }
-
-  /**
-   * 
-   */
-  handleSearchInputBlur(evt)
-  {
-    // Hide body overlay
-    this.hideBodyOverlay();
-  }
-
-  /**
-   * 
-   */
-  handleScrolledYOffset(evt)
-  {
-    this._refViewHeader.handleScrolledYOffset(evt);
-  }
-
-  render() {
-    //
-    let { bgSrc } = this.state;
-
-    //
-    return (
-      <View style={[styles.root]}>
-        <View
-          ref={ref => { this._refViewHeaderWrap = ref; }}
-          style={[styles.headerWrap]}
-          onLayout={({ nativeEvent }) => {
-            // alert(JSON.stringify(nativeEvent.layout));
-            // {"height": 110,"width":480,"y":0,"x":0}
-          }}
-        >
-          <HeaderComponent
-            ref={ref => { this._refViewHeader = ref; }}
-            handleSearchInputFocus={this.handleSearchInputFocus}
-            handleSearchInputBlur={this.handleSearchInputBlur}
-          />
-        </View>
-        <View
-          style={[styles.bodyWrap]}
-          // ref={ref => { this._refViewBodyWrap = ref; }}
-        >
-          <BodyComponent
-            ref={ref => { this._refViewBody = ref; }}
-            handleScrolledYOffset={this.handleScrolledYOffset}
-          />
-          <TouchableOpacity
-            ref={ref => { this._refViewBodyOverlay = ref; }}
-            style={[ESS.value('$floating'), styles.bodyOverlay, ESS.value('$hidden')]}
-            activeOpacity={0.2}
-            onPress={this.handleTouchOverlay}
-          />
-        </View>
-      </View>
-    );
-  }
-}

@@ -15,6 +15,16 @@ export default class MsgEntity extends Entity
         super(data);
     }
 
+    /**
+     * 
+     * @returns {String}
+     */
+    key()
+    {
+        let key = this.id;
+        return key;
+    }
+
     _date()
     {
         let date = null;
@@ -57,4 +67,34 @@ export default class MsgEntity extends Entity
         }
         return false;
     }
+
+    /**
+     * Get tel (formatted) info
+     * @return {String}
+     */
+    getTel()
+    {
+        let tel = new String(this.tel).toString().trim();
+        return tel;
+    }
+
+    /**
+     * Check tel match?
+     * @param {String} tel
+     * @return {Boolean}
+     */
+    isTelMatched(tel)
+    {
+        return tel == this.getTel();
+    }
+
+    /**
+     * Get content (formatted) info
+     * @return {String}
+     */
+    getContent()
+    {
+        let content = new String(this.content).toString().trim();
+        return content;
+    }   
 }
