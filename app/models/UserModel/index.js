@@ -30,9 +30,10 @@ export default class UserModel extends Model
     dataList(_opts = {})
     {
         // Get, format input(s)
-        var opts = Object.assign({}, _opts);
-        //
-        let dataList = super.dataList();
+        let opts = Object.assign({}, _opts);
+
+        // Fetch data
+        let dataList = super.dataList(opts);
         // +++ Include 'Favorites'?
         if (opts.favorite/* && (dataList instanceof Array)*/) {
             dataList = ([
@@ -46,7 +47,7 @@ export default class UserModel extends Model
         }
 
         // Filter?
-        let filters = _opts.filters || {};
+        let { filters = {} } = opts;
         // ---
         if (Object.keys(filters).length) {
             dataList = dataList.filter((item, idx) => {
@@ -73,5 +74,14 @@ export default class UserModel extends Model
 
         // Return
         return dataList;
+    }
+
+    findOne(_opts = {})
+    {
+        // Fetch data
+        let dataList = this.dataList(_opts);
+
+        // Filters
+        return dataList[0] || null;
     }
 }

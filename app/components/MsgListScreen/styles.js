@@ -23,54 +23,23 @@ const dfStyles = {
     },
     headerIcons: {},
     headerIcon: {
-        fontSize: 18
+        fontSize: '2rem'
     },
-    headerIconsLeft: {
+    headerIconsL: {
         paddingRight: 12
     },
     searchInput: {
-        // $outline: 1,
         flex: 1,
-        paddingLeft: 12,
-        paddingRight: 12,
-        maxHeight: 100
-    },
-    searchInputContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         alignItems: 'center',
     },
     searchInputText: {
         padding: 0,
-        height: 18
     },
-    searchInputTextPhColor: '#b3b3b3',
-    // +++
-    headContact: {
-        height: 34,
-        borderWidth: 1,
-        borderColor: '#d2d2d2',
-        backgroundColor: '#f0f0f0',
-        borderRadius: 8,
-        paddingLeft: 14,
-        paddingRight: 14,
-        marginRight: 5,
-        marginBottom: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
+    searchInputTextLine1: {
+        fontSize: '1.25rem',
+        fontWeight: '700'
     },
-    headContactTxt: {
-        color: '#313131',
-        paddingRight: 15,
-        fontSize: '0.8rem'
-    },
-    headContactRemoveTxt: {
-        color: '#909090',
-        fontSize: '1rem',
-    },
-
-    headerIconsRight: {
+    headerIconsR: {
         paddingLeft: 12,
         // justifyContent: 'center',
         alignItems: 'center'
@@ -82,26 +51,78 @@ const dfStyles = {
     body: {
         flex: 1
     },
-    bodyLatestUsedContacts: {
+    bodyMsgListBox: {
+
+    },
+    bodyMsgListBoxCC: {
+
+    },
+    bodyMsg: {
+        padding: 10,
         flexDirection: 'row',
-        flexWrap: 'wrap'
+        alignItems: 'center',
     },
-    bodyContact: {
-        width: '50%',
-        borderRightWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: '#d9d9d9',
-        paddingTop: 18,
-        paddingBottom: 18,
-        justifyContent: 'center',
-        alignItems: 'center'
+    bodyMsgL: {
+        justifyContent: 'flex-start',
     },
-    bodyContactLatestUsed: {
+    bodyMsgR: {
+        justifyContent: 'flex-end',
+    },
+    bodyMsgItem: {
+        flexShrink: 1,
+        maxWidth: '66%'
+    },
+    bodyMsgItemL: {
         
     },
-    bodyContactTxt: {
-        color: '#333333',
-        // fontWeight: '700'
+    bodyMsgItemR: {
+
+    },
+    bodyMsgContent: {
+        width: 'auto',
+        padding: 15,
+        backgroundColor: 'green',
+        borderRadius: 10
+    },
+    bodyMsgContentL: {},
+    bodyMsgContentR: {},
+    bodyMsgContentTxt: {
+        color: 'white',
+    },
+    bodyMsgTime: {
+        alignItems: 'flex-end',
+    },
+    bodyMsgTimeTxt: {
+
+    },
+    bodyMsgIcons: {
+    },
+    bodyMsgIconsL: {
+        paddingRight: 10
+    },
+    bodyMsgIconsR: {
+        paddingLeft: 10
+    },
+    bodyMsgIcon: {
+        fontSize: 32
+    },
+    //tools
+    tools: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#d8d8d8'
+    },
+    tool: {
+        marginTop: 12,
+        marginBottom: 12,
+        marginLeft: 17,
+        marginRight: 17,
+    },
+    toolTouch: {
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     //footer
     footer: {
@@ -138,7 +159,7 @@ const dfStyles = {
         maxHeight: '5rem'
     },
     footerSearchInputTextPhColor: '#b7b7b7',
-    footerIconsRight: {
+    footerIconsR: {
         paddingRight: 12
     },
     footerSearchIconArrowRoundUp: {

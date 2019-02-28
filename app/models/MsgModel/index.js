@@ -36,19 +36,29 @@ export default class MsgModel extends Model
     {
         // Get, format input(s)
         let opts = Object.assign({}, _opts);
-        // +++
-        let { filters = {} } = opts;
 
         // Fetch data
         let dataList = super.dataList();
 
         // Filter?
+        let { filters = {} } = opts;
         if (Object.keys(filters).length) {
             dataList = dataList.filter((msgEnt, idx) => {
                 let result = true;
                 if (filters.tel) {
                     result = msgEnt.isTelMatched(filters.tel);
-                    console.log("result: ", result, filters.tel);
+                }
+                return result;
+            });
+        }
+
+        // Sort?
+        let { orderBy = {} } = opts;
+        if (Object.keys(orderBy).length) {
+            dataList.sort((a, b) => {
+                let result = 0;
+                if ('date' in orderBy) {
+                    result = orderBy['date'] ? (b._date() - a._date()) : (a._date() - b._date());
                 }
                 return result;
             });

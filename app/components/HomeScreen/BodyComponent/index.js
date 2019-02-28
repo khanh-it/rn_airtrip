@@ -161,7 +161,7 @@ export default class BodyComponent extends PureComponent
     if (1 === index) {
       setTimeout(() => {
         this.handleSelectMsg(msg, null);
-      }, 256);
+      }, 128);
     }
     //.end
     return (

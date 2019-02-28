@@ -7,7 +7,7 @@ import * as Ani from 'react-native-animatable';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import {
   View,
-  ScrollView,
+  FlatList,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
@@ -24,6 +24,7 @@ import styles from './styles';
 // Model(s)
 import MsgListModel from '../../models/MsgListModel';
 import MsgModel from '../../models/MsgModel';
+import UserModel from '../../models/UserModel';
 import MsgEntity from '../../models/MsgEntity';
 
 /**
@@ -38,18 +39,37 @@ export default class MsgListComponent extends PureComponent
     // Init model(s)
     this._msgListModel = new MsgListModel();
     this._msgModel = new MsgModel();
+    this._userModel = new UserModel();
 
     // Init state
+    // +++
+    let msg = props.navigation.getParam('msg');
+    let contact = this._userModel.findOne({
+      filters: { fullname_or_tel: msg.getTel() }
+    });
+    let dataList = this._msgModel.dataList({
+      filters: { tel: msg.getTel() },
+      orderBy: {
+        date: true
+      }
+    }); // console.log('dataList: ', dataList);
+    // +++
     this.state = {
-      msg: props.navigation.getParam('msg'),
-      dataList: [],
+      msg,
+      contact,
+      dataList,
+      // list of selected msg
+      msgsSelected: {},
+      //
+      msgEditing: false
     };
 
     // Bind method(s)
     this.handleSelectMsg = this.handleSelectMsg.bind(this);
+    this._renderMsgItem = this._renderMsgItem.bind(this);
 
     // Navigations event(s)
-    const willFocusSubscription = props.navigation.addListener(
+    /* const willFocusSubscription = props.navigation.addListener(
       'willFocus',
       payload => {
         console.debug('willFocus: ', payload);
@@ -72,20 +92,7 @@ export default class MsgListComponent extends PureComponent
       payload => {
         console.debug('didBlur: ', payload);
       }
-    );
-  }
-
-  componentDidMount()
-  {
-    let { msg } = this.state;
-    if (msg instanceof MsgEntity) {
-      let dataList = this._msgModel.dataList({
-        filters: {
-          tel: msg.getTel()
-        }
-      });
-      this.setState(state => ({ dataList }));
-    }
+    ); */
   }
 
   /**
@@ -95,72 +102,223 @@ export default class MsgListComponent extends PureComponent
    */
   handleSelectMsg(msgEnt, evt)
   {
-
+    let { msgEditing, msgsSelected } = this.state;
+    if (!msgEditing) {
+      return;
+    }
+    let key = msgEnt.key();
+    msgsSelected = Object.assign({}, msgsSelected);
+    // Case: select
+    if (!msgsSelected[key]) {
+      msgsSelected[key] = msgEnt;
+    // Case: unselect
+    } else {
+      delete msgsSelected[key];
+    }
+    this.setState(() => ({ msgsSelected }));
   }
 
-  /**
-   * 
-   * @param {boolean}} isFocused
-   * @returns this
-   */
-  _switchIconSearch(isFocused)
+  _renderMsgItem({ item: msgEnt, idx })
   {
-    if (isFocused) {
-      this._refIconArrowBack.setNativeProps(ESS.value('$unhidden'));
-      this._refIconSearch.setNativeProps(ESS.value('$hidden'));
-    } else {
-      this._refIconArrowBack.setNativeProps(ESS.value('$hidden'));
-      this._refIconSearch.setNativeProps(ESS.value('$unhidden'));
-    }
-    return this;
+    let {
+      msgEditing,
+      msgsSelected
+    } = this.state;
+    let key = msgEnt.key();
+
+    return (
+      <View
+        key={key}
+        style={[styles.bodyMsg, styles['bodyMsg' + idx], styles.bodyMsgR]}
+      >
+        <View style={[styles.bodyMsgItem, styles.bodyMsgItemR]}>
+          <View style={[styles.bodyMsgTime, styles.bodyMsgTimeR]}>
+            <Text style={[styles.bodyMsgTimeTxt]}>{msgEnt.dateAsStr()}</Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onLongPress={(evt) => {
+              this.setState({ msgEditing: true });
+            }}
+            onPress={(evt) => {
+              this.handleSelectMsg(msgEnt, evt);
+            }}
+            style={[styles.bodyMsgContent, styles.bodyMsgContentR]}
+          >
+            <Text style={[styles.bodyMsgContentTxt]}>{msgEnt.getContent()}</Text>
+          </TouchableOpacity>
+        </View>
+        {msgEditing && (
+          <Ani.View
+            style={[styles.bodyMsgIcons, styles.bodyMsgIconsR]}
+            // animation={'fadeIn'}
+          >
+            <VectorIcon
+              Icon={Ionicon}
+              nameIos={msgsSelected[key] ? 'ios-radio-button-on' : 'ios-radio-button-off'}
+              nameAndroid={msgsSelected[key] ? 'md-radio-button-on' : 'md-radio-button-off'}
+              style={[styles.bodyMsgIcon, styles.bodyMsgIconCkb]}
+            />
+          </Ani.View>
+        )}
+      </View>
+    );
   }
 
   _renderHeader()
   {
     let {
-      msg
+      msg,
+      contact,
+      msgsSelected,
+      msgEditing,
     } = this.state;
 
     return (
-      <View
+      <Ani.View
         ref={ref => { this._refHeader = ref; }}
         style={[styles.header]}
       >
-        <View style={[styles.headerIcons, styles.headerIconsLeft]}>
+        <View style={[styles.headerIcons, styles.headerIconsL]}>
+          {msgEditing && (
+            <Ani.View
+              animation={'fadeIn'}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({ msgEditing: false });
+                }}
+              >
+                <VectorIcon
+                  Icon={Ionicon}
+                  nameIos='ios-close'
+                  nameAndroid='md-close'
+                  style={[styles.headerIcon, styles.headerIconClose]}
+                />
+              </TouchableOpacity>
+            </Ani.View>
+          )}
+          {!msgEditing && (
+            <Ani.View
+              animation={'fadeIn'}
+            >
+              <TouchableOpacity
+                onPress={() => { $g.navServTop.goBack(); }}
+              >
+                <VectorIcon
+                  Icon={Ionicon}
+                  nameIos='ios-arrow-back'
+                  nameAndroid='md-arrow-back'
+                  style={[styles.headerIcon, styles.headerIconBack]}
+                />
+              </TouchableOpacity>
+            </Ani.View>
+          )}
+        </View>
+        <View style={[styles.searchInput]}>
+          <Text style={[styles.searchInputText, styles.searchInputTextLine1]}>{contact.fullname()}</Text>
+          <Text style={[styles.searchInputText, styles.searchInputTextLine2]}>{msg.getTel()}</Text>
+        </View>
+        <View style={[styles.headerIcons, styles.headerIconsR]}>
+          <VectorIcon
+              Icon={Ionicon}
+              nameIos='ios-call'
+              nameAndroid='md-call'
+              style={[styles.headerIcon, styles.searchIconCall]}
+            />
+        </View>
+      </Ani.View>
+    );
+  }
+
+  _renderTools()
+  {
+    let {
+      msgEditing
+    } = this.state;
+
+    return (msgEditing && (
+      <Ani.View
+        ref={ref => { this._refTools = ref; }}
+        style={[styles.tools]}
+        animation={'fadeInUp'}
+        duration={512}
+      >
+        {/*Forward*/}
+        <View style={[styles.tool]}>
           <TouchableOpacity
-            onPress={() => { $g.navServTop.goBack(); }}
+            onPress={(evt) => { alert('Forward') }}
+            style={[styles.toolTouch]}
           >
             <VectorIcon
               Icon={Ionicon}
-              name='ios-arrow-back'
-              size={18}
-              style={[styles.headerIcon, styles.headerIconBack]}
+              nameIos='ios-redo'
+              nameAndroid='md-redo'
+              size={32}
+              style={[styles.toolIcon]}
             />
+            <Text style={[styles.toolTxt]}>{'Forward'}</Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={[styles.searchInput]}
-          contentContainerStyle={[styles.searchInputContainer]}
-        >
-          <Text>{msg.getTel()}</Text>
-        </View>
-        <View style={[styles.headerIcons, styles.headerIconsRight]}>            
-          <VectorIcon
+        {/*end#Forward*/}
+        {/*Copy*/}
+        <View style={[styles.tool]}>
+          <TouchableOpacity
+            onPress={(evt) => { alert('Copy') }}
+            style={[styles.toolTouch]}
+          >
+            <VectorIcon
               Icon={Ionicon}
-              nameIos='ios-person'
-              nameAndroid='md-person'
-              size={18}
-              style={[styles.searchIcon, styles.searchIconPerson]}
+              nameIos='ios-copy'
+              nameAndroid='md-copy'
+              size={32}
+              style={[styles.toolIcon]}
             />
+            <Text style={[styles.toolTxt]}>{'Copy'}</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-    );
+        {/*end#Copy*/}
+        {/*Delete*/}
+        <View style={[styles.tool]}>
+          <TouchableOpacity
+            onPress={(evt) => { alert('Delete') }}
+            style={[styles.toolTouch]}
+          >
+            <VectorIcon
+              Icon={Ionicon}
+              nameIos='ios-trash'
+              nameAndroid='md-trash'
+              size={32}
+              style={[styles.toolIcon]}
+            />
+            <Text style={[styles.toolTxt]}>{'Delete'}</Text>
+          </TouchableOpacity>
+        </View>
+        {/*end#Delete*/}
+        {/*More*/}
+        <View style={[styles.tool]}>
+          <TouchableOpacity
+            onPress={(evt) => { alert('More') }}
+            style={[styles.toolTouch]}
+          >
+            <VectorIcon
+              Icon={Ionicon}
+              name='ios-more'
+              size={32}
+              style={[styles.toolIcon]}
+            />
+            <Text style={[styles.toolTxt]}>{'More'}</Text>
+          </TouchableOpacity>
+        </View>
+        {/*end#More*/}
+      </Ani.View>
+    ));
   }
 
   _renderBody()
   {
     let {
-      dataList 
+      dataList
     } = this.state;
 
     return (
@@ -169,25 +327,18 @@ export default class MsgListComponent extends PureComponent
         style={[styles.body]}
       >
       {(dataList.length > 0) && (
-        <ScrollView style={[styles.bodyLatestUsedContacts]}>
-        {dataList.map((msgEnt, idx) => {
-          return (
-            <View
-              key={msgEnt.key()}
-              style={[styles.bodyContact, styles['bodyContact' + idx], styles.bodyContactLatestUsed]}
-            >
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={(evt) => {
-                  return this.handleSelectMsg(msgEnt, evt);
-                }}
-              >
-                <Text style={[styles.bodyContactTxt]}>{msgEnt.getContent()}</Text>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-        </ScrollView>
+        <FlatList
+          style={[styles.bodyMsgListBox]}
+          contentContainerStyle={[styles.bodyMsgListBoxCC]}
+          ref={ref => { this._refFlatList = ref; }}
+          data={dataList}
+          extraData={this.state}
+          keyExtractor={(msgEnt) => msgEnt.key()}
+          renderItem={this._renderMsgItem}
+          keyboardDismissMode={'on-drag'}
+          removeClippedSubviews={true}
+          inverted={true}
+        />
       )}
       </View>
     );
@@ -196,18 +347,18 @@ export default class MsgListComponent extends PureComponent
   _renderFooter()
   {
     let {
-      dataList
+      msgEditing
     } = this.state;
 
-    return (
-      <View
+    return (!msgEditing && (
+      <Ani.View
         ref={ref => { this._refFooter = ref; }}
-        style={[ESS.value('$floating'), styles.footer]}
+        style={[styles.footer]}
       >
         <View style={[styles.footerInputPadding]}>
           <View style={[styles.footerIcons, styles.footerIconsLeft]}>
             <TouchableOpacity
-              onPress={() => { $g.navServTop.goBack(); }}
+              onPress={() => { alert('input more...'); }}
             >
               <VectorIcon
                 Icon={Ionicon}
@@ -239,15 +390,15 @@ export default class MsgListComponent extends PureComponent
             activeOpacity={0.8}
           >
             <VectorIcon
-                Icon={Ionicon}
-                name='ios-arrow-round-up'
-                size={36}
-                style={[styles.footerSearchIcon, styles.footerSearchIconArrowRoundUp]}
-              />
+              Icon={Ionicon}
+              name='ios-arrow-round-up'
+              size={36}
+              style={[styles.footerSearchIcon, styles.footerSearchIconArrowRoundUp]}
+            />
           </TouchableOpacity>
         </View>
-      </View>
-    );
+      </Ani.View>
+    ));
   }
 
   render() {
@@ -259,6 +410,9 @@ export default class MsgListComponent extends PureComponent
       {/* Body */}
       {this._renderBody()}
       {/* .end#Body */}
+      {/* Tools */}
+      {this._renderTools()}
+      {/* .end#Tools */}
       {/* Footer */}
       {this._renderFooter()}
       {/* .end#Footer */}
